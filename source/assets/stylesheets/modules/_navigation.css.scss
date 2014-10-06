@@ -1,0 +1,36 @@
+io-navigation {
+  @include clearfix;
+  border-bottom: 1px solid #eee;
+  display: block;
+  line-height: 30px;
+  margin-bottom: 35px;
+  padding-bottom: 20px;
+
+  //
+  //  Site name
+  //
+  .site-name {
+    float: left;
+    font-size: 1.4rem;
+    font-weight: bold;
+    width: 10%;
+  }
+
+
+  //
+  //  Menu
+  //
+  .menu {
+    float: right;
+    font-size: 0.85rem;
+    width: 80%;
+
+    a {
+      color: $text_color;
+      display: inline-block;
+      margin-right: 25px;
+    }
+  }
+
+
+}

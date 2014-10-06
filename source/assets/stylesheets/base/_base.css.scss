@@ -1,0 +1,16 @@
+html {
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+body {
+  @include default-font;
+  background-color: white;
+  color: $text_color;
+  margin: $vertical_padding $horizontal_padding;
+  text-rendering: optimizeLegibility;
+}
+
+p a {
+  color: $text_color;
+}

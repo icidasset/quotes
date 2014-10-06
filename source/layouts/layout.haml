@@ -1,0 +1,55 @@
+!!! 5
+%html
+  %head
+    %meta{ "charset" => "utf-8" }
+    %meta{ "http-equiv" => "X-UA-Compatible", "content" => "IE=edge" }
+
+    %title Quotes
+
+    %link{ "href" => "http://fonts.googleapis.com/css?family=Hind:400,300,500,600,700", "rel" => "stylesheet", "type" => "text/css" }
+
+    = stylesheet_link_tag "application"
+
+  %body
+
+
+    /
+    /  Components
+    /
+    %io-navigation
+    %io-page-container
+
+
+    /
+    /  Spider Content
+    /
+    %section.spider-content{ "style" => "display:none;" }
+      = yield rescue nil
+
+
+    /
+    /  Application.js
+    /
+    = javascript_include_tag "application"
+
+
+    /
+    /  Templates
+    /
+    - template_file_paths = Dir.glob("source/templates/**/**.html.haml").map do |p|
+      - path = p.sub("source/", "").split("/")
+      - path.delete("templates")
+      - path[-1] = path[-1].split(".").first[1..-1]
+      - path.join("/")
+
+    - template_file_paths.each do |t|
+      %script{ "type" => "text/html", "id" => "template-" + t.gsub("/", "-") }
+        = partial "templates/#{t}", locals: { data: data }
+
+
+    /
+    /  Data
+    /
+    %script{ "type" => "application/json", "id" => "initial-data" }
+      - data = @data_processor.get_data[I18n.locale.to_s]
+      = Oj.dump(data)

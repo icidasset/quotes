@@ -1,0 +1,34 @@
+%form
+
+  %label JSON url (must support CORS)
+  %input{ "type" => "text", "name" => "url", "placeholder" => "http://..." }
+
+  %input{ "type" => "submit", "value" => "Save" }
+
+  / notes
+  %br
+
+  %p
+    JSON structure:
+
+  %pre
+    %code
+      :preserve
+        [
+          {
+            "quote": "Quote",
+            "author": "Author"
+          },
+
+          ...
+        ]
+
+  %p
+    You can use this service to serve your json as cross domain:
+    %br
+    %a{ "href" => "https://jsonp.nodejitsu.com/" } https://jsonp.nodejitsu.com/
+
+  %p
+    Example url:
+    %br
+    %a{ "href" => "https://jsonp.nodejitsu.com/?url=https%3A%2F%2Fgist.githubusercontent.com%2Ficidasset%2F844a6dfd0bbe2bb9be3d%2Fraw%2Fdf2164cb19d24c042eb0f4ed45bc5ac9b5b23f12%2Fquotes.json" } Right click and copy url

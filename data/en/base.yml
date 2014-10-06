@@ -1,0 +1,17 @@
+site_name: "Quotes"
+
+#
+#  Routes
+#
+routes:
+  - key: "index"
+    name: "Index"
+    route: ""
+
+  - key: "quote"
+    name: "Quote"
+    route: "quote/"
+
+  - key: "set-quote-collection"
+    name: "Set Quote Collection"
+    route: "set-quote-collection/"
