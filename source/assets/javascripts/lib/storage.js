@@ -23,6 +23,11 @@ App.Storage = {
   },
 
 
+  set_previous_random_quotes: function(quotes) {
+    this.set("previous_random_quotes", JSON.stringify(quotes));
+  },
+
+
   //
   //  Getters
   //
@@ -46,6 +51,40 @@ App.Storage = {
   },
 
 
+  get_previous_random_quotes: function() {
+    return JSON.parse(
+      this.get("previous_random_quotes") || "[]"
+    );
+  },
+
+
+  get_random_quote: function() {
+    var quotes = this.get_quotes();
+    var map = _.map(quotes, function(q) { return [md5(q.quote + q.author), q]; });
+
+    var all_hashes = _.map(map, function(m) { return m[0]; });
+    var previous_hashes = this.get_previous_random_quotes();
+    var next_hashes = _.difference(all_hashes, previous_hashes);
+
+    if (next_hashes.length === 0) {
+      next_hashes = all_hashes;
+      previous_hashes = [];
+    }
+
+    var random_idx = App.Helpers.random_number(1, next_hashes.length) - 1;
+    var random = next_hashes[random_idx];
+
+    if (random) {
+      previous_hashes.push(random);
+      App.Storage.set_previous_random_quotes(previous_hashes);
+
+      return _.find(map, function(m) {
+        return (m[0] === random);
+      })[1];
+    }
+  },
+
+
   //
   //  Other
   //
@@ -64,7 +103,7 @@ App.Storage = {
           App.Storage.set_quotes(response);
           App.Storage.send_fetched_signal();
         }
-      })
+      });
 
     }
   },

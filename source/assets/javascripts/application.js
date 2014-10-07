@@ -1,5 +1,6 @@
 //= require vendor/director
 //= require vendor/gator
+//= require vendor/md5
 //= require vendor/mustache
 //= require vendor/object-keys-polyfill
 //= require vendor/observe

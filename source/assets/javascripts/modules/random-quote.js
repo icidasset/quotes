@@ -10,20 +10,23 @@ skate("io-random-quote", {
     this.el = el;
 
     // bind
-    _.bindAll(this, "render");
+    _.bindAll(this, "last_quotes_fetch_change", "render");
 
     // events
-    App.StateManagerNotifier.on("change:last_quotes_fetch", this.render);
+    App.StateManagerNotifier.on("change:last_quotes_fetch", this.last_quotes_fetch_change);
 
     // initial render
     this.render();
   },
 
 
+  last_quotes_fetch_change: function() {
+    if (this.el.no_quote) this.render();
+  },
+
+
   render: function() {
-    var quotes = App.Storage.get_quotes();
-    var random_idx = App.Helpers.random_number(1, quotes.length) - 1;
-    var quote = quotes[random_idx];
+    var quote = App.Storage.get_random_quote();
 
     // TODO - make templates of these
     if (quote) {
@@ -33,9 +36,11 @@ skate("io-random-quote", {
       ].join("");
 
     } else if (!App.Storage.get_quotes_url()) {
+      this.el.no_quote = true;
       this.el.innerHTML = '<p>No quotes collection has been setup yet.</p>';
 
     } else {
+      this.el.no_quote = true;
       this.el.innerHTML = '<p>No quotes found.</p>';
 
     }
