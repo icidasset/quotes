@@ -18,7 +18,6 @@ set :markdown, fenced_code_blocks: true,
 activate :i18n, mount_at_root: DEFAULT_LANGUAGE.to_sym
 activate :directory_indexes
 activate :bourbon
-activate :gumby
 
 set :css_dir, "assets/stylesheets"
 set :js_dir, "assets/javascripts"
