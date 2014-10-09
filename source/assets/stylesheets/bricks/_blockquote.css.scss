@@ -5,11 +5,6 @@ blockquote {
   margin: 2.575em 1.1em 0;
   position: relative;
 
-  &,
-  & + p {
-    width: 30%;
-  }
-
   .end-quote-mark {
     display: inline-block;
     position: absolute;
@@ -27,6 +22,10 @@ blockquote {
 
   p:first-child:before { content: "“"; left: -27px; }
   p .end-quote-mark:after { content: "”"; right: -27px; }
+
+  p:first-child {
+    margin-top: 0;
+  }
 
   & + p {
     font-weight: bold;

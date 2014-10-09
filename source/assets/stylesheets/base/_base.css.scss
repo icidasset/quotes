@@ -7,7 +7,6 @@ body {
   @include default-font;
   background-color: white;
   color: $text_color;
-  margin: $vertical_padding $horizontal_padding;
   text-rendering: optimizeLegibility;
 }
 

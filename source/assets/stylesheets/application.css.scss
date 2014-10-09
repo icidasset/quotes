@@ -6,8 +6,12 @@
 @import "base/base";
 
 @import "bricks/blockquote";
+@import "bricks/center-content";
 @import "bricks/form";
 
 @import "modules/intro";
 @import "modules/navigation";
+@import "modules/random-quote";
 @import "modules/page-container";
+
+@import "layouts/flex";

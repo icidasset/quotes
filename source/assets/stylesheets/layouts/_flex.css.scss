@@ -1,0 +1,18 @@
+.l-flex {
+  height: 100%;
+
+  body {
+    height: 100%;
+
+    @include display(flex);
+    @include flex-direction(column);
+  }
+
+  io-page-container {
+    @include display(flex);
+    @include flex-direction(column);
+    @include flex(1);
+  }
+
+
+}

@@ -1,0 +1,8 @@
+.center-content {
+  @include display(flex);
+  @include align-items(center);
+  @include justify-content(center);
+  @include flex(1);
+
+
+}
