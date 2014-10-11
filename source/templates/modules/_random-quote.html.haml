@@ -1,0 +1,18 @@
+.center-content
+  %div
+    %blockquote
+      %p
+        {{quote}}
+        %span.end-quote-mark
+
+    %p
+      By {{author}}
+
+
+
+.random-quote__nav
+  .random-quote__nav-count
+    {{status.quotes_seen}} / {{status.total_quotes}}
+
+  .random-quote__nav-button
+    %a Show another quote

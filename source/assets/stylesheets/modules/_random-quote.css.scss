@@ -1,10 +1,47 @@
 io-random-quote {
   display: block;
-  width: 30%;
+  position: relative;
+
+  @include display(flex);
+  @include flex-direction(column);
+  @include flex(1);
+
+  .center-content > div {
+    width: 30%;
+  }
 
   blockquote {
     display: inline-block;
     margin: 0;
+  }
+
+
+  //
+  //  Navigation
+  //
+  .random-quote__nav {
+    bottom: 0;
+    color: #bbb;
+    font-size: 0.65rem;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  .random-quote__nav-count {
+    float: left;
+    width: 50%;
+  }
+
+  .random-quote__nav-button {
+    float: right;
+    text-align: right;
+    width: 50%;
+
+    a {
+      cursor: pointer;
+      display: inline-block;
+    }
   }
 
 

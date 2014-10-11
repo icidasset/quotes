@@ -29,7 +29,6 @@ skate("io-settings", {
 });
 
 
-
 //
 //  Event handlers
 //
@@ -43,7 +42,6 @@ function submit_form_handler(form, e) {
   App.Storage.set_quotes_url(url);
   App.Storage.fetch_quotes();
 }
-
 
 
 //

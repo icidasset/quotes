@@ -20,20 +20,38 @@ skate("io-random-quote", {
   },
 
 
+  events: {
+    "click .random-quote__nav-button a": function(element) {
+      console.log(element);
+    }
+  },
+
+
+  //
+  //  Event handlers
+  //
   last_quotes_fetch_change: function() {
     if (this.el.no_quote) this.render();
   },
 
 
+  //
+  //  Rendering
+  //
   render: function() {
     var quote = App.Storage.get_random_quote();
+    var status;
 
-    // TODO - make templates of these
     if (quote) {
-      this.el.innerHTML = [
-        '<blockquote><p>', quote.quote, '<span class="end-quote-mark"></span></p></blockquote>',
-        '<p>By ', quote.author, '</p>'
-      ].join("");
+      status = {
+        total_quotes: App.Storage.get_quotes().length,
+        quotes_seen: App.Storage.get_previous_random_quotes().length
+      };
+
+      this.el.innerHTML = Mustache.render(
+        App.Helpers.get_template("modules-random-quote"),
+        _.extend({ status: status }, quote)
+      );
 
     } else if (!App.Storage.get_quotes_url()) {
       this.el.no_quote = true;
