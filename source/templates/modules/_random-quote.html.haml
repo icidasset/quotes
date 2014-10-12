@@ -1,12 +1,13 @@
 .center-content
-  %div
+  .random-quote__quote
     %blockquote
       %p
         {{quote}}
         %span.end-quote-mark
 
     %p
-      By {{author}}
+      By
+      %span.random-quote__quote-author {{author}}
 
 
 
@@ -15,4 +16,4 @@
     {{status.quotes_seen}} / {{status.total_quotes}}
 
     %a.random-quote__nav-button
-      Show another quote (randomized)
+      Show another quote

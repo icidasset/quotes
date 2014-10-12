@@ -6,9 +6,14 @@ io-random-quote {
   @include flex-direction(column);
   @include flex(1);
 
-  .center-content > div {
+  //
+  //  Quote
+  //
+  .random-quote__quote {
     max-width: 540px;
   }
+
+  .random-quote__quote-author {}
 
   blockquote {
     display: inline-block;

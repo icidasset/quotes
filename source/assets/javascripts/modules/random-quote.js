@@ -13,6 +13,10 @@ skate("io-random-quote", {
   events: {
     "click .random-quote__nav-button": function(el, event) {
       el.instance.render();
+    },
+
+    "click .random-quote__quote-author": function(el, event) {
+      el.instance.quote_author_click_handler(event);
     }
   }
 
@@ -75,6 +79,21 @@ RandomQuote.prototype.render = function() {
 //
 RandomQuote.prototype.last_quotes_fetch_change = function() {
   if (this.el.no_quote) this.render();
+};
+
+
+RandomQuote.prototype.quote_author_click_handler = function(event) {
+  var query = "Bob Dylan";
+  var wiki_url = "http://en.wikipedia.org/w/api.php?action=query&prop=extracts&exchars=1000&format=json&titles=" + encodeURIComponent(query);
+  var url = "https://jsonp.nodejitsu.com/?url=" + encodeURIComponent(wiki_url);
+
+  reqwest({
+    url: url,
+    crossOrigin: true,
+    success: function(r) {
+      console.log(r);
+    }
+  });
 };
 
 
