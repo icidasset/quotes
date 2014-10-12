@@ -7,12 +7,16 @@ io-random-quote {
   @include flex(1);
 
   .center-content > div {
-    width: 30%;
+    max-width: 540px;
   }
 
   blockquote {
     display: inline-block;
-    margin: 0;
+    margin: 0 1.2em;
+
+    @media (min-width: 768px) {
+      margin: 0;
+    }
   }
 
 
@@ -20,27 +24,26 @@ io-random-quote {
   //  Navigation
   //
   .random-quote__nav {
-    bottom: 0;
-    color: #bbb;
+    color: #aaa;
     font-size: 0.65rem;
-    left: 0;
-    position: absolute;
-    right: 0;
-  }
+    margin-top: 13px;
 
-  .random-quote__nav-count {
-    float: left;
-    width: 50%;
+    @media (min-width: 768px) {
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      right: 0;
+    }
   }
 
   .random-quote__nav-button {
-    float: right;
-    text-align: right;
-    width: 50%;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 14px;
 
-    a {
-      cursor: pointer;
-      display: inline-block;
+    &:hover,
+    &:focus {
+      color: $text_color;
     }
   }
 

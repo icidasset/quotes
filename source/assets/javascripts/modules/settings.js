@@ -5,7 +5,6 @@
 
 skate("io-settings", {
 
-
   template: function(el) {
     el.innerHTML = Mustache.render(
       App.Helpers.get_template("modules-settings"),
@@ -14,42 +13,51 @@ skate("io-settings", {
   },
 
 
-  events: {
-    "submit form": submit_form_handler
+  ready: function(el) {
+    el.instance = new Settings(el);
   },
 
 
-  ready: function(el) {
-    var form = el.querySelector("form");
-
-    set_inital_form_values(form);
+  events: {
+    "submit form": function(el, event) {
+      el.instance.submit_form_handler(event);
+    }
   }
 
-
 });
+
+
+
+function Settings(el) {
+  this.el = el;
+  this.set_inital_form_values();
+}
 
 
 //
 //  Event handlers
 //
-function submit_form_handler(form, e) {
+Settings.prototype.submit_form_handler = function(event) {
+  var form = event.target;
   var url = form.querySelector("[name=\"url\"]").value.toString().trim();
 
   // prevent default
-  e.preventDefault();
+  event.preventDefault();
 
   // set & fetch
   App.Storage.set_quotes_url(url);
+  App.Storage.set_previous_random_quotes([]);
   App.Storage.fetch_quotes();
-}
+};
 
 
 //
 //  Other
 //
-function set_inital_form_values(form) {
+Settings.prototype.set_inital_form_values = function() {
+  var form = this.el.querySelector("form");
   form.querySelector("[name=\"url\"]").value = App.Storage.get_quotes_url();
-}
+};
 
 
 }());

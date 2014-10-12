@@ -1,17 +1,20 @@
-.l-flex {
-  height: 100%;
-
-  body {
+@media (min-width: 768px) {
+  .l-flex {
     height: 100%;
+    min-height: 500px;
 
-    @include display(flex);
-    @include flex-direction(column);
-  }
+    body {
+      height: 100%;
 
-  io-page-container {
-    @include display(flex);
-    @include flex-direction(column);
-    @include flex(1);
+      @include display(flex);
+      @include flex-direction(column);
+    }
+
+    io-page-container {
+      @include display(flex);
+      @include flex-direction(column);
+      @include flex(1);
+    }
   }
 
 

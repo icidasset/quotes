@@ -14,8 +14,9 @@ form {
     box-sizing: border-box;
     color: $text_color;
     font-size: 1.75rem;
+    max-width: 540px;
     padding: 14px 12px 11px;
-    width: 35%;
+    width: 100%;
 
     @include placeholder {
       color: rgba($text_color, .125);

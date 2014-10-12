@@ -10,10 +10,13 @@ io-navigation {
   //  Site name
   //
   .site-name {
-    float: left;
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     font-weight: bold;
-    width: 10%;
+
+    @media (min-width: 768px) {
+      float: left;
+      width: 15%;
+    }
   }
 
 
@@ -21,14 +24,37 @@ io-navigation {
   //  Menu
   //
   .menu {
-    float: right;
-    font-size: 0.85rem;
-    width: 80%;
+    @include clearfix;
+    font-size: 0.7rem;
+    line-height: 1.9;
+    margin-top: 24px;
+    text-transform: uppercase;
+
+    @media (min-width: 768px) {
+      float: right;
+      margin-top: 0;
+      position: relative;
+      top: 4px;
+      width: 80%;
+    }
 
     a {
+      clear: both;
       color: $text_color;
       display: inline-block;
-      margin-right: 25px;
+      float: left;
+      position: relative;
+      text-decoration: none;
+
+      @media (min-width: 768px) {
+        clear: none;
+        float: none;
+        margin-right: 24px;
+      }
+    }
+
+    a.is-active {
+      color: $japonica;
     }
   }
 
