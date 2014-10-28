@@ -3,7 +3,7 @@
 "use strict";
 
 
-skate("io-navigation", {
+App.module("io-navigation", {
 
   template: function(el) {
     el.innerHTML = Mustache.render(
@@ -13,7 +13,7 @@ skate("io-navigation", {
   },
 
 
-  ready: function(el) {
+  created: function(el) {
     el.instance = new Navigation(el);
   }
 

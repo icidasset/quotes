@@ -3,7 +3,7 @@
 "use strict";
 
 
-skate("io-settings", {
+App.module("io-settings", {
 
   template: function(el) {
     el.innerHTML = Mustache.render(
@@ -13,7 +13,7 @@ skate("io-settings", {
   },
 
 
-  ready: function(el) {
+  created: function(el) {
     el.instance = new Settings(el);
   },
 

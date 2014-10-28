@@ -3,9 +3,9 @@
 "use strict";
 
 
-skate("io-page-container", {
+App.module("io-page-container", {
 
-  ready: function(el) {
+  created: function(el) {
     el.instance = new PagesContainer(el);
   }
 
