@@ -3,9 +3,9 @@
 "use strict";
 
 
-skate("io-random-quote", {
+App.module("io-random-quote", {
 
-  ready: function(el) {
+  created: function(el) {
     el.instance = new RandomQuote(el);
   },
 

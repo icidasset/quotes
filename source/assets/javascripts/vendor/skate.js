@@ -1,5 +1,20 @@
 (function () {
 'use strict';
+var $___46__46__47_src_47_globals__ = (function() {
+  "use strict";
+  var __moduleName = "../src/globals";
+  'use strict';
+  if (!window.__skate) {
+    window.__skate = {
+      observer: undefined,
+      registry: {}
+    };
+  }
+  var $__default = window.__skate;
+  return {get default() {
+      return $__default;
+    }};
+})();
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -51,14 +66,6 @@ var $___46__46__47_src_47_utils__ = (function() {
       }
     };
   }
-  function getClassList(element) {
-    var classList = element.classList;
-    if (classList) {
-      return classList;
-    }
-    var attrs = element.attributes;
-    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
-  }
   function getClosestIgnoredElement(element) {
     var parent = element;
     while (parent && parent !== document) {
@@ -98,9 +105,6 @@ var $___46__46__47_src_47_utils__ = (function() {
     },
     get debounce() {
       return debounce;
-    },
-    get getClassList() {
-      return getClassList;
     },
     get getClosestIgnoredElement() {
       return getClosestIgnoredElement;
@@ -302,15 +306,105 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       return $__default;
     }};
 })();
+var $___46__46__47_src_47_registry__ = (function() {
+  "use strict";
+  var __moduleName = "../src/registry";
+  'use strict';
+  var globals = ($___46__46__47_src_47_globals__).default;
+  var hasOwn = ($___46__46__47_src_47_utils__).hasOwn;
+  function getClassList(element) {
+    var classList = element.classList;
+    if (classList) {
+      return classList;
+    }
+    var attrs = element.attributes;
+    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
+  }
+  function isDefinitionOfType(id, type) {
+    return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
+  }
+  var $__default = {
+    clear: function() {
+      globals.registry = {};
+      return this;
+    },
+    getForElement: function(element) {
+      var attrs = element.attributes;
+      var attrsLen = attrs.length;
+      var definitions = [];
+      var isAttr = attrs.is;
+      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+      var tag = element.tagName.toLowerCase();
+      var isAttrOrTag = isAttrValue || tag;
+      var definition;
+      var tagToExtend;
+      if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
+        definition = globals.registry[isAttrOrTag];
+        tagToExtend = definition.extends;
+        if (isAttrValue) {
+          if (tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        } else if (!tagToExtend) {
+          definitions.push(definition);
+        }
+      }
+      for (var a = 0; a < attrsLen; a++) {
+        var attr = attrs[a].nodeName;
+        if (isDefinitionOfType(attr, skate.types.ATTR)) {
+          definition = globals.registry[attr];
+          tagToExtend = definition.extends;
+          if (!tagToExtend || tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        }
+      }
+      var classList = getClassList(element);
+      var classListLen = classList.length;
+      for (var b = 0; b < classListLen; b++) {
+        var className = classList[b];
+        if (isDefinitionOfType(className, skate.types.CLASS)) {
+          definition = globals.registry[className];
+          tagToExtend = definition.extends;
+          if (!tagToExtend || tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        }
+      }
+      return definitions;
+    },
+    has: function(id) {
+      return hasOwn(globals.registry, id);
+    },
+    set: function(id, definition) {
+      if (this.has(id)) {
+        throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+      }
+      globals.registry[id] = definition;
+      return this;
+    },
+    remove: function(id) {
+      if (this.has(id)) {
+        delete globals.registry[id];
+      }
+      return this;
+    }
+  };
+  return {get default() {
+      return $__default;
+    }};
+})();
 var $___46__46__47_src_47_lifecycle__ = (function() {
   "use strict";
   var __moduleName = "../src/lifecycle";
   'use strict';
+  var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
   var data = ($___46__46__47_src_47_data__).default;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var $__4 = $___46__46__47_src_47_utils__,
-      inherit = $__4.inherit,
-      objEach = $__4.objEach;
+  var registry = ($___46__46__47_src_47_registry__).default;
+  var $__8 = $___46__46__47_src_47_utils__,
+      inherit = $__8.inherit,
+      objEach = $__8.objEach;
   var elProto = window.HTMLElement.prototype;
   var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
   function getLifecycleFlag(target, component, name) {
@@ -352,7 +446,9 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
         });
       }
     }
+    var a;
     var attrs = target.attributes;
+    var attrsCopy = [];
     var attrsLen = attrs.length;
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
@@ -360,11 +456,11 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
         var name = mutation.attributeName;
         var attr = attrs[name];
         if (attr && mutation.oldValue === null) {
-          type = 'insert';
+          type = 'created';
         } else if (attr && mutation.oldValue !== null) {
-          type = 'update';
+          type = 'updated';
         } else if (!attr) {
-          type = 'remove';
+          type = 'removed';
         }
         triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
       });
@@ -373,11 +469,12 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       attributes: true,
       attributeOldValue: true
     });
-    for (var a = 0; a < attrsLen; a++) {
-      var attr = attrs[a];
-      if (attr) {
-        triggerCallback('insert', attr.nodeName, (attr.value || attr.nodeValue));
-      }
+    for (a = 0; a < attrsLen; a++) {
+      attrsCopy.push(attrs[a]);
+    }
+    for (a = 0; a < attrsLen; a++) {
+      var attr = attrsCopy[a];
+      triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
     }
   }
   function addEventListeners(target, component) {
@@ -390,7 +487,7 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
           return handler(target, e, target);
         }
         var current = e.target;
-        while (current && current !== document && current !== target) {
+        while (current && current !== document && current !== target.parentNode) {
           if (matchesSelector.call(current, delegate)) {
             return handler(target, e, current);
           }
@@ -403,8 +500,8 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
     });
   }
-  function triggerReady(target, component) {
-    if (ensureLifecycleFlag(target, component, 'ready')) {
+  function triggerCreated(target, component) {
+    if (ensureLifecycleFlag(target, component, 'created')) {
       return;
     }
     inherit(target, component.prototype);
@@ -413,52 +510,30 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
     }
     addEventListeners(target, component);
     addAttributeListeners(target, component);
-    if (component.ready) {
-      component.ready(target);
+    if (component.created) {
+      component.created(target);
     }
   }
-  function triggerInsert(target, component) {
-    if (ensureLifecycleFlag(target, component, 'insert')) {
+  function triggerAttached(target, component) {
+    if (ensureLifecycleFlag(target, component, 'attached')) {
       return;
     }
     target.removeAttribute(component.unresolvedAttribute);
     target.setAttribute(component.resolvedAttribute, '');
-    if (component.insert) {
-      component.insert(target);
+    if (component.attached) {
+      component.attached(target);
     }
   }
-  function triggerRemove(target, component) {
-    if (component.remove) {
-      component.remove(target);
+  function triggerDetached(target, component) {
+    if (component.detached) {
+      component.detached(target);
     }
-    setLifecycleFlag(target, component, 'insert', false);
+    setLifecycleFlag(target, component, 'attached', false);
   }
   function triggerLifecycle(target, component) {
-    triggerReady(target, component);
-    triggerInsert(target, component);
+    triggerCreated(target, component);
+    triggerAttached(target, component);
   }
-  ;
-  return {
-    get triggerLifecycle() {
-      return triggerLifecycle;
-    },
-    get triggerReady() {
-      return triggerReady;
-    },
-    get triggerRemove() {
-      return triggerRemove;
-    }
-  };
-})();
-var $___46__46__47_src_47_init__ = (function() {
-  "use strict";
-  var __moduleName = "../src/init";
-  'use strict';
-  var debounce = ($___46__46__47_src_47_utils__).debounce;
-  var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
-  var $__7 = $___46__46__47_src_47_lifecycle__,
-      triggerLifecycle = $__7.triggerLifecycle,
-      triggerRemove = $__7.triggerRemove;
   function initElements(elements) {
     var elementsLen = elements.length;
     for (var a = 0; a < elementsLen; a++) {
@@ -466,10 +541,10 @@ var $___46__46__47_src_47_init__ = (function() {
       if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
         continue;
       }
-      var currentNodeComponents = skate.components(element);
-      var currentNodeComponentsLength = currentNodeComponents.length;
-      for (var b = 0; b < currentNodeComponentsLength; b++) {
-        triggerLifecycle(element, currentNodeComponents[b]);
+      var currentNodeDefinitions = registry.getForElement(element);
+      var currentNodeDefinitionsLength = currentNodeDefinitions.length;
+      for (var b = 0; b < currentNodeDefinitionsLength; b++) {
+        triggerLifecycle(element, currentNodeDefinitions[b]);
       }
       var elementChildNodes = element.childNodes;
       var elementChildNodesLen = elementChildNodes.length;
@@ -486,20 +561,17 @@ var $___46__46__47_src_47_init__ = (function() {
         continue;
       }
       removeElements(element.childNodes);
-      var components = skate.components(element);
-      var componentsLen = components.length;
-      for (var b = 0; b < componentsLen; b++) {
-        triggerRemove(element, components[b]);
+      var definitions = registry.getForElement(element);
+      var definitionsLen = definitions.length;
+      for (var b = 0; b < definitionsLen; b++) {
+        triggerDetached(element, definitions[b]);
       }
     }
   }
-  var initDocument = debounce(function() {
-    initElements(document.getElementsByTagName('html'));
-  });
   ;
   return {
-    get initDocument() {
-      return initDocument;
+    get triggerCreated() {
+      return triggerCreated;
     },
     get initElements() {
       return initElements;
@@ -509,10 +581,65 @@ var $___46__46__47_src_47_init__ = (function() {
     }
   };
 })();
+var $___46__46__47_src_47_document_45_observer__ = (function() {
+  "use strict";
+  var __moduleName = "../src/document-observer";
+  'use strict';
+  var globals = ($___46__46__47_src_47_globals__).default;
+  var $__10 = $___46__46__47_src_47_lifecycle__,
+      initElements = $__10.initElements,
+      removeElements = $__10.removeElements;
+  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
+  var getClosestIgnoredElement = ($___46__46__47_src_47_utils__).getClosestIgnoredElement;
+  function documentObserverHandler(mutations) {
+    var mutationsLen = mutations.length;
+    for (var a = 0; a < mutationsLen; a++) {
+      var mutation = mutations[a];
+      var addedNodes = mutation.addedNodes;
+      var removedNodes = mutation.removedNodes;
+      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+        initElements(addedNodes);
+      }
+      if (removedNodes && removedNodes.length) {
+        removeElements(removedNodes);
+      }
+    }
+  }
+  function createDocumentObserver() {
+    var observer = new MutationObserver(documentObserverHandler);
+    observer.observe(document, {
+      childList: true,
+      subtree: true
+    });
+    return observer;
+  }
+  var $__default = {
+    register: function(fixIe) {
+      if (fixIe) {
+        MutationObserver.fixIe();
+        this.unregister();
+      }
+      if (!globals.observer) {
+        globals.observer = createDocumentObserver();
+      }
+      return this;
+    },
+    unregister: function() {
+      if (globals.observer) {
+        globals.observer.disconnect();
+        globals.observer = undefined;
+      }
+      return this;
+    }
+  };
+  return {get default() {
+      return $__default;
+    }};
+})();
 var $___46__46__47_src_47_version__ = (function() {
   "use strict";
   var __moduleName = "../src/version";
-  var $__default = '0.10.0';
+  var $__default = '0.11.1';
   return {get default() {
       return $__default;
     }};
@@ -521,137 +648,50 @@ var $___46__46__47_src_47_skate__ = (function() {
   "use strict";
   var __moduleName = "../src/skate";
   'use strict';
+  var documentObserver = ($___46__46__47_src_47_document_45_observer__).default;
+  var $__14 = $___46__46__47_src_47_lifecycle__,
+      triggerCreated = $__14.triggerCreated,
+      initElements = $__14.initElements;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var triggerReady = ($___46__46__47_src_47_lifecycle__).triggerReady;
-  var $__10 = $___46__46__47_src_47_init__,
-      initDocument = $__10.initDocument,
-      initElements = $__10.initElements,
-      removeElements = $__10.removeElements;
-  var $__11 = $___46__46__47_src_47_utils__,
-      getClassList = $__11.getClassList,
-      getClosestIgnoredElement = $__11.getClosestIgnoredElement,
-      hasOwn = $__11.hasOwn,
-      inherit = $__11.inherit;
+  var registry = ($___46__46__47_src_47_registry__).default;
+  var $__17 = $___46__46__47_src_47_utils__,
+      debounce = $__17.debounce,
+      inherit = $__17.inherit;
   var version = ($___46__46__47_src_47_version__).default;
-  var documentObserver;
-  var registry = {};
-  function createMutationObserver(root) {
-    var observer = new MutationObserver(function(mutations) {
-      var mutationsLength = mutations.length;
-      for (var a = 0; a < mutationsLength; a++) {
-        var mutation = mutations[a];
-        var addedNodes = mutation.addedNodes;
-        var removedNodes = mutation.removedNodes;
-        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-          initElements(addedNodes);
-        }
-        if (removedNodes && removedNodes.length) {
-          removeElements(removedNodes);
-        }
-      }
-    });
-    observer.observe(root, {
-      childList: true,
-      subtree: true
-    });
-    return observer;
-  }
-  function destroyDocumentObserver() {
-    if (documentObserver) {
-      documentObserver.disconnect();
-      documentObserver = undefined;
-    }
-  }
-  function isComponentOfType(id, type) {
-    return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
-  }
-  function makeElementConstructor(component) {
+  var initDocument = debounce(function() {
+    initElements(document.getElementsByTagName('html'));
+  });
+  function makeElementConstructor(definition) {
     function CustomElement() {
       var element;
-      var tagToExtend = component.extends;
-      var componentId = component.id;
+      var tagToExtend = definition.extends;
+      var definitionId = definition.id;
       if (tagToExtend) {
         element = document.createElement(tagToExtend);
-        element.setAttribute('is', componentId);
+        element.setAttribute('is', definitionId);
       } else {
-        element = document.createElement(componentId);
+        element = document.createElement(definitionId);
       }
-      component.prototype = CustomElement.prototype;
-      triggerReady(element, component);
+      definition.prototype = CustomElement.prototype;
+      triggerCreated(element, definition);
       return element;
     }
-    CustomElement.prototype = component.prototype;
+    CustomElement.prototype = definition.prototype;
     return CustomElement;
   }
-  function skate(id, component) {
-    component = inherit(component || {}, skate.defaults);
-    component.id = id;
-    if (hasOwn(registry, component.id)) {
-      throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
+  function skate(id, definition) {
+    definition = inherit(definition || {}, skate.defaults);
+    definition.id = id;
+    if (registry.has(definition.id)) {
+      throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
     }
-    registry[component.id] = component;
-    if (component.remove && !MutationObserver.isFixingIe) {
-      MutationObserver.fixIe();
-      destroyDocumentObserver();
-    }
+    registry.set(definition.id, definition);
     initDocument();
-    if (!documentObserver) {
-      documentObserver = createMutationObserver(document);
-    }
-    if (component.type.indexOf(skate.types.TAG) > -1) {
-      return makeElementConstructor(component);
+    documentObserver.register(definition.remove);
+    if (definition.type.indexOf(skate.types.TAG) > -1) {
+      return makeElementConstructor(definition);
     }
   }
-  skate.components = function(element) {
-    var attrs = element.attributes;
-    var attrsLen = attrs.length;
-    var components = [];
-    var isAttr = attrs.is;
-    var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-    var tag = element.tagName.toLowerCase();
-    var isAttrOrTag = isAttrValue || tag;
-    var component;
-    var tagToExtend;
-    if (isComponentOfType(isAttrOrTag, skate.types.TAG)) {
-      component = registry[isAttrOrTag];
-      tagToExtend = component.extends;
-      if (isAttrValue) {
-        if (tag === tagToExtend) {
-          components.push(component);
-        }
-      } else if (!tagToExtend) {
-        components.push(component);
-      }
-    }
-    for (var a = 0; a < attrsLen; a++) {
-      var attr = attrs[a].nodeName;
-      if (isComponentOfType(attr, skate.types.ATTR)) {
-        component = registry[attr];
-        tagToExtend = component.extends;
-        if (!tagToExtend || tag === tagToExtend) {
-          components.push(component);
-        }
-      }
-    }
-    var classList = getClassList(element);
-    var classListLen = classList.length;
-    for (var b = 0; b < classListLen; b++) {
-      var className = classList[b];
-      if (isComponentOfType(className, skate.types.CLASS)) {
-        component = registry[className];
-        tagToExtend = component.extends;
-        if (!tagToExtend || tag === tagToExtend) {
-          components.push(component);
-        }
-      }
-    }
-    return components;
-  };
-  skate.destroy = function() {
-    destroyDocumentObserver();
-    registry = {};
-    return skate;
-  };
   skate.init = function(nodes) {
     if (!nodes) {
       return;
@@ -671,10 +711,6 @@ var $___46__46__47_src_47_skate__ = (function() {
     NOTAG: 'ac',
     TAG: 't'
   };
-  skate.unregister = function(id) {
-    delete registry[id];
-    return skate;
-  };
   skate.version = version;
   skate.defaults = {
     attributes: undefined,
@@ -688,11 +724,12 @@ var $___46__46__47_src_47_skate__ = (function() {
     unresolvedAttribute: 'unresolved'
   };
   window.skate = skate;
-  if (typeof define === 'function' && define.amd) {
+  if (typeof define === 'function') {
     define(function() {
       return skate;
     });
-  } else if (typeof module === 'object') {
+  }
+  if (typeof module === 'object') {
     module.exports = skate;
   }
   var $__default = skate;

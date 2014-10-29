@@ -3,18 +3,8 @@
 "use strict";
 
 
-// object_observer.open(function(added, removed, changed, get_old_value_fn) {
-//   Object.keys(added).forEach(function(property) {});
-//   Object.keys(removed).forEach(function(property) {});
-//   Object.keys(changed).forEach(function(property) {});
-// });
-
-
-
 var ObserveNotifier = function(obj) {
   this.obj = obj;
-  this.object_observer = new ObjectObserver(this.obj);
-  this.object_observer_callbacks = {};
 
   this.path_observers = {};
   this.path_observer_counter = 1;
@@ -26,7 +16,6 @@ ObserveNotifier.prototype.on = function(key, callback) {
   var split = key.split(":");
   var operator = split[0];
   var path = split.slice(1, split.length).join(":");
-  var obno_instance = this;
 
   // check
   if (!callback) {
@@ -48,11 +37,19 @@ ObserveNotifier.prototype.on = function(key, callback) {
     case "change_with_path":
       var observer, obj;
 
-      observer = new PathObserver(this.obj, path);
-      observer.open(callback);
+      observer = function(changes) {
+        for (var k=0, l=changes.length; k<l; ++k) {
+          var change = changes[k];
+          if (change.type == "update") {
+            callback(change.name, change.oldValue);
+          }
+        }
+      };
+
+      Object.observe(this.obj, observer);
 
       obj = {
-        id: obno_instance.path_observer_counter,
+        id: this.path_observer_counter,
         key: key,
         operator: operator,
         path: path,
@@ -60,8 +57,8 @@ ObserveNotifier.prototype.on = function(key, callback) {
         callback: callback
       };
 
-      obno_instance.path_observers[key] = obno_instance.path_observers[key] || [];
-      obno_instance.path_observers[key].push(obj);
+      this.path_observers[key] = this.path_observers[key] || [];
+      this.path_observers[key].push(obj);
       break;
 
     case "change_without_path":
@@ -81,19 +78,18 @@ ObserveNotifier.prototype.on = function(key, callback) {
   }
 
   // increase counter
-  obno_instance.path_observer_counter++;
+  this.path_observer_counter++;
 };
 
 
 
 ObserveNotifier.prototype.off = function(key, callback) {
-  var obj = obno_instance.path_observers[key];
+  var obj = this.path_observers[key];
   if (!obj) return;
 
   for (var i=0, j=obj.length; i<j; ++i) {
     if (obj[i].callback === callback || !callback) {
-      obj[i].observer.close();
-      obj[i].observer = null;
+      Object.unobserve(this.obj, obj[i].observer);
       obj[i] = null;
     }
   }
