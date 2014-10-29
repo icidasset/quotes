@@ -1,6 +1,10 @@
 io-page-container {
-  display: block;
+  display: none;
   margin: 0 $horizontal_padding $vertical_padding;
+
+  html.has-js & {
+    display: block;
+  }
 
 
 }
