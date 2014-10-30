@@ -1,6 +1,10 @@
 html {
-  font-size: 18px;
+  font-size: 14px;
   line-height: 1.55;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
 }
 
 body {

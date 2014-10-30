@@ -53,8 +53,12 @@ io-navigation {
       @media (min-width: 768px) {
         clear: none;
         float: none;
-        margin-right: 24px;
+        margin-right: 28px;
       }
+    }
+
+    a[key="index"] {
+      display: none;
     }
 
     a.is-active {
