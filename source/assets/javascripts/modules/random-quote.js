@@ -57,6 +57,7 @@ RandomQuote.prototype.render = function() {
       quotes_seen: App.Storage.get_previous_random_quotes().length
     };
 
+    this.el.no_quote = false;
     this.el.innerHTML = Mustache.render(
       App.Helpers.get_template("modules-random-quote"),
       _.extend({ status: status }, quote)
