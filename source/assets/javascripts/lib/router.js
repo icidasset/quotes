@@ -3,6 +3,9 @@
 "use strict";
 
 
+// alternative: https://github.com/visionmedia/page.js
+
+
 var router = new Router({
   "/":                          function() { defer.call(this, "index"); },
   "/quote(/)":                  function() { defer.call(this, "quote"); },
