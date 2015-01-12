@@ -23,7 +23,7 @@
 
 (function() {
   document.addEventListener("DOMContentLoaded", function(e) {
-    document.body.parentNode.className += "has-js";
+    document.body.parentNode.classList.add("has-js");
 
     App.DataStore.setup();
     App.Router.setup();
