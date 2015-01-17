@@ -14,12 +14,13 @@ io-navigation {
   //  Site name
   //
   .site-name {
+    color: $text_color;
     font-size: 1.45rem;
     font-weight: bold;
+    text-decoration: none;
 
     @media (min-width: 768px) {
       float: left;
-      width: 15%;
     }
   }
 
