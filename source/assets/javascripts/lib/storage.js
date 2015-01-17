@@ -5,6 +5,9 @@
 
 App.Storage = {
 
+  default_quotes_url: "http://keymaps.herokuapp.com/api/public/MS9xdW90ZXM=",
+
+
   //
   //  Setters
   //
@@ -47,7 +50,7 @@ App.Storage = {
     if (u) u = u.trim();
     else u = "";
 
-    return (u.length === 0 ? null : u);
+    return (u.length === 0 ? null : u) || this.default_quotes_url;
   },
 
 
