@@ -1,0 +1,20 @@
+build_directory: "build"
+
+
+locales:
+  default: "en"
+
+data:
+  in_html: true
+
+javascript:
+  app_variable_name: "App"
+
+  # these are not run through browserify
+  vendor_paths:
+    - node_modules/es6-promise/dist/es6-promise.js
+    - node_modules/fetch-ponyfill/fetch.js
+    - node_modules/object.observe/dist/object-observe-lite.js
+    - node_modules/page/page.js
+    - node_modules/skatejs/dist/skate.js
+    - node_modules/underscore/underscore.js

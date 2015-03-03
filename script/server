@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-bundle exec middleman server --reload-paths=data/ -p 5555
