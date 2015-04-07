@@ -1,3 +1,8 @@
+import _ from "underscore";
+import helpers from "../lib/helpers";
+import {stateNotifier} from "../lib/state";
+
+
 skate("io-page-container", {
 
   created: function(el) {
@@ -13,24 +18,22 @@ skate("io-page-container", {
 
   prototype: {
 
-    bind_events: function() {
-      App.stateNotifier.on("change:route_page_path", this.render);
+    bind_events() {
+      stateNotifier.on("change:route_page_path", this.render);
     },
 
-
-    unbind_events: function() {
-      App.stateNotifier.off("change:route_page_path", this.render);
+    unbind_events() {
+      stateNotifier.off("change:route_page_path", this.render);
     },
 
-
-    render: function(route_page_path) {
-      var page_data = App.helpers.traverse_object(route_page_path, App.data.pages);
-      var template = App.helpers.get_template("pages/" + route_page_path);
+    render(route_page_path) {
+      var page_data = helpers.traverse_object(route_page_path, App.data.pages);
+      var template = helpers.get_template("pages/" + route_page_path);
       var compiled_template = template(page_data);
 
       this.innerHTML = compiled_template;
 
-      if (page_data._flex) {
+      if (page_data.settings.flex) {
         document.querySelector("html").classList.add("l-flex");
       } else {
         document.querySelector("html").classList.remove("l-flex");

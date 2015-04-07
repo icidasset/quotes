@@ -1,3 +1,4 @@
+import _ from "underscore";
 import ObserveNotifier from "../vendor/observe-notifier";
 
 
@@ -6,7 +7,7 @@ var initial_state = JSON.parse(
 );
 
 
-var state = _.extend({}, initial_state, {
+export var state = _.extend({}, initial_state, {
   route: null,
   route_params: {},
   route_page_path: null,
@@ -15,5 +16,4 @@ var state = _.extend({}, initial_state, {
 });
 
 
-App.state = state;
-App.stateNotifier = new ObserveNotifier(state);
+export var stateNotifier = new ObserveNotifier(state);

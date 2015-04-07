@@ -1,3 +1,8 @@
+import _ from "underscore";
+import helpers from "../lib/helpers";
+import {stateNotifier} from "../lib/state";
+
+
 skate("io-random-quote", {
 
   created: function(el) {
@@ -28,12 +33,12 @@ skate("io-random-quote", {
   prototype: {
 
     bind_events: function() {
-      App.stateNotifier.on("change:last_quotes_fetch", this.last_quotes_fetch_change);
+      stateNotifier.on("change:last_quotes_fetch", this.last_quotes_fetch_change);
     },
 
 
     unbind_events: function() {
-      App.stateNotifier.off("change:last_quotes_fetch", this.last_quotes_fetch_change);
+      stateNotifier.off("change:last_quotes_fetch", this.last_quotes_fetch_change);
     },
 
 

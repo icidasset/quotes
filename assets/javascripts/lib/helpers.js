@@ -1,4 +1,4 @@
-App.helpers = {
+export default {
 
   traverse_object: function(path, obj, split_by) {
     var split = path.split(split_by || "/");
@@ -16,6 +16,20 @@ App.helpers = {
     return this.traverse_object(path, App.templates);
   },
 
+
+  get_parents: function(el) {
+    var parents = [];
+    var p = el.parentNode;
+
+    while (p !== null) {
+      var o = p;
+      parents.push(o);
+      p = o.parentNode;
+    }
+
+    return parents;
+  },
+  
 
   random_number: function(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;

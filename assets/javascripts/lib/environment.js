@@ -1,4 +1,4 @@
-window.App = window.App || {};
+import _ from "underscore";
 
 
 //

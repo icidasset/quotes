@@ -1,4 +1,5 @@
-_nav_index: 1
-_flex: 1
+settings:
+  nav_index: 1
+  flex: 1
 
 title: "Random Quote"

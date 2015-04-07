@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html language="{{_all._locale}}" class="{{html_class}}">
+<html language="{{_all._locale}}" class="{{#if settings.flex}}l-flex{{/if}}">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,15 +39,11 @@
   </script>
 
 
-  {{!-- initial data --}}
-  {{#if data_as_json}}
-    <script id="initial-data" type="application/json">
-      {{{data_as_json}}}
-    </script>
-  {{/if}}
-
-
   {{!-- bundled javascript --}}
+  <script src="{{asset_path 'jspm_packages/system.js'}}"></script>
+  <script src="{{asset_path 'javascripts/jspm_config.js'}}"></script>
+  <script src="{{asset_path 'javascripts/handlebars.js'}}"></script>
+  <script src="{{asset_path 'javascripts/templates.js'}}"></script>
   <script src="{{asset_path 'javascripts/application.js'}}"></script>
 
 

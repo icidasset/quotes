@@ -1,3 +1,9 @@
+import _ from "underscore";
+import md5 from "../vendor/md5";
+import helpers from "./helpers";
+import {state} from "./state";
+
+
 App.storage = {
 
   default_quotes_url: "http://keymaps.herokuapp.com/api/public/MS9xdW90ZXM=",
@@ -69,7 +75,7 @@ App.storage = {
       previous_hashes = [];
     }
 
-    var random_idx = App.helpers.random_number(1, next_hashes.length) - 1;
+    var random_idx = helpers.random_number(1, next_hashes.length) - 1;
     var random = next_hashes[random_idx];
 
     if (random) {
@@ -108,7 +114,7 @@ App.storage = {
 
 
   send_fetched_signal: function() {
-    App.state.last_quotes_fetch = +(new Date());
+    state.last_quotes_fetch = +(new Date());
   }
 
 };

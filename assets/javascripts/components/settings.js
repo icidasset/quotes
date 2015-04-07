@@ -1,3 +1,8 @@
+import _ from "underscore";
+import helpers from "../lib/helpers";
+import {stateNotifier} from "../lib/state";
+
+
 skate("io-settings", {
 
   template: function(el) {

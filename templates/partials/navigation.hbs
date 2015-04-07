@@ -3,7 +3,7 @@
 </a>
 
 <div class="menu">
-  {{#each _all._navigation_items}}
+  {{#each _all.collections.navigation_items}}
     <a href="{{relative_path route ../_route}}" class="{{#ifEqual path ../_path}}is-active{{/ifEqual}}">{{title}}</a>
   {{/each}}
 </div>
