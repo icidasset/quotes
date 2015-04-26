@@ -6,7 +6,7 @@ import {state} from "./state";
 
 App.storage = {
 
-  default_quotes_url: "http://keymaps.herokuapp.com/api/public/MS9xdW90ZXM=",
+  default_quotes_url: "http://keymaps-api.herokuapp.com/public/MS9xdW90ZXM=",
 
 
   //
