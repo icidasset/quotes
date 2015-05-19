@@ -1,6 +1,6 @@
 import _ from "underscore";
 import helpers from "../lib/helpers";
-import {stateNotifier} from "../lib/state";
+import {state, stateNotifier} from "../lib/state";
 
 
 skate("io-random-quote", {
@@ -57,13 +57,23 @@ skate("io-random-quote", {
           _.extend({ status: status }, quote)
         );
 
+        if (!state.last_quotes_fetch) {
+          App.storage.fetch_quotes();
+        }
+
       } else if (!App.storage.get_quotes_url()) {
         this.no_quote = true;
         this.innerHTML = '<p>No quotes collection has been setup yet.</p>';
 
       } else {
         this.no_quote = true;
-        this.innerHTML = '<p>No quotes found.</p>';
+
+        if (!state.last_quotes_fetch) {
+          this.innerHTML = '<p><em>Loading collection &#8230;</em></p>';
+          App.storage.fetch_quotes();
+        } else {
+          this.innerHTML = '<p>No quotes found.</p>';
+        }
 
       }
     },

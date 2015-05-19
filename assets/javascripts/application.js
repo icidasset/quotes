@@ -21,9 +21,6 @@ data_promise.then(function(data) {
   // setup routes
   setup_routes();
 
-  // renew quotes collection
-  App.storage.fetch_quotes();
-
 }, function() {
   console.error("Could not load data.");
 
