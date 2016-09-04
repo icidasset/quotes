@@ -1,9 +1,0 @@
-<a class="site-name" href="{{relative_path "" ../_route}}">
-  {{_all.base.site_name}}
-</a>
-
-<div class="menu">
-  {{#each _all.collections.navigation_items}}
-    <a href="{{relative_path route ../_route}}" class="{{#ifEqual path ../_path}}is-active{{/ifEqual}}">{{title}}</a>
-  {{/each}}
-</div>

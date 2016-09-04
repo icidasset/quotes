@@ -1,8 +1,0 @@
-build_directory: "build"
-
-
-locales:
-  default: "en"
-
-javascript:
-  app_variable_name: "App"
