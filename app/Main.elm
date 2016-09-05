@@ -1,7 +1,7 @@
 import Navigation
 
 import Routing exposing (urlParser)
-import Update exposing (setInitialModel, updateModel, urlUpdated)
+import Update exposing (setInitialModel, subscriptions, updateModel, urlUpdated)
 import View exposing (view)
 
 
@@ -11,5 +11,5 @@ main =
     , view = view
     , update = updateModel
     , urlUpdate = urlUpdated
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = subscriptions
     }

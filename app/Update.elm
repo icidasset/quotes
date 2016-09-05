@@ -1,10 +1,13 @@
 module Update exposing (..)
 
+import Dict
 import Material
+import Maybe exposing (Maybe)
 import Navigation
 
 import CSSModules
-import Model exposing (Model)
+import Model exposing (Model, UserDataModel, fromUserData, initialUserData, toUserData)
+import Ports exposing (..)
 import Routing exposing (LocationResult, toPage)
 
 
@@ -12,6 +15,13 @@ type Msg =
   GoToIndex
   | GoToSettings
   | Mdl (Material.Msg Msg)
+  | SetCollectionUrl String
+
+
+type alias ProgramFlag =
+  { cssmodules : Maybe CSSModules.Flag
+  , userData : Maybe UserDataModel
+  }
 
 
 
@@ -28,9 +38,18 @@ updateModel msg model =
     GoToSettings ->
       model ! [Navigation.newUrl "/settings"]
 
+    -- User interactions
+    SetCollectionUrl url ->
+      keepState { model | collectionUrl = url }
+
     -- Material Design
     Mdl msg' ->
       Material.update msg' model
+
+
+keepState : Model -> (Model, Cmd Msg)
+keepState model =
+  (model, localStorage (toUserData model))
 
 
 
@@ -43,14 +62,23 @@ urlUpdated result model =
 
 
 
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
+
+
+
 -- Init
 
 
-setInitialModel : Maybe CSSModules.Flag -> LocationResult -> (Model, Cmd Msg)
-setInitialModel maybe result =
+setInitialModel : ProgramFlag -> LocationResult -> (Model, Cmd Msg)
+setInitialModel flag result =
   let
     model = toPage result
     |> Model.initial
-    |> CSSModules.init maybe
+    |> CSSModules.init flag.cssmodules
   in
-    model ! []
+    (fromUserData model flag.userData) ! []

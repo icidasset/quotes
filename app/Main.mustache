@@ -16,7 +16,18 @@
 <body>
 
   <script src="application.js"></script>
-  <script>Elm.Main.fullscreen({{{cssmodules}}})</script>
+  <script>
+    var storageKey = "quotesUserData";
+
+    var app = Elm.Main.fullscreen({
+      cssmodules: {{{cssmodules}}},
+      userData: JSON.parse(localStorage.getItem(storageKey)),
+    });
+
+    app.ports.localStorage.subscribe(function(value) {
+      localStorage.setItem(storageKey, JSON.stringify(value));
+    });
+  </script>
 
 </body>
 </html>
