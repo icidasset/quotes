@@ -4,8 +4,8 @@ import Html exposing (Html, section, text)
 import Html.Attributes exposing (..)
 
 import CSSModules exposing (cssmodule)
+import Messages exposing (Msg)
 import Model exposing (Model)
-import Update exposing (Msg)
 
 import Bits.Pages
 import Bits.Footer

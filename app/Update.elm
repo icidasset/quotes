@@ -5,17 +5,11 @@ import Material
 import Maybe exposing (Maybe)
 import Navigation
 
+import Commands exposing (..)
 import CSSModules
-import Model exposing (Model, UserDataModel, fromUserData, initialUserData, toUserData)
-import Ports exposing (..)
+import Messages exposing (Msg(..))
+import Model exposing (Model, UserDataModel, fromUserData, initialUserData)
 import Routing exposing (LocationResult, toPage)
-
-
-type Msg =
-  GoToIndex
-  | GoToSettings
-  | Mdl (Material.Msg Msg)
-  | SetCollectionUrl String
 
 
 type alias ProgramFlag =
@@ -38,18 +32,35 @@ updateModel msg model =
     GoToSettings ->
       model ! [Navigation.newUrl "/settings"]
 
+    -- Go fetch
+    FetchSucceed value ->
+      { model |
+          fetchInProgress = False
+        , fetchError = False
+        , quotes = value
+      } ! []
+
+    FetchFail error ->
+      let
+        log = Debug.log "error" error
+      in
+        { model |
+            fetchInProgress = False
+          , fetchError = True
+        } ! []
+
     -- User interactions
     SetCollectionUrl url ->
-      keepState { model | collectionUrl = url }
+      let
+        newModel = { model | collectionUrl = url }
+        cmdKeepState = keepState newModel
+        cmdFetchQuotes = fetchQuotes newModel
+      in
+        newModel ! [cmdKeepState, cmdFetchQuotes]
 
     -- Material Design
     Mdl msg' ->
       Material.update msg' model
-
-
-keepState : Model -> (Model, Cmd Msg)
-keepState model =
-  (model, localStorage (toUserData model))
 
 
 
@@ -80,5 +91,6 @@ setInitialModel flag result =
     model = toPage result
     |> Model.initial
     |> CSSModules.init flag.cssmodules
+    |> fromUserData flag.userData
   in
-    (fromUserData model flag.userData) ! []
+    { model | fetchInProgress = True } ! [fetchQuotes model]

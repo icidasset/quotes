@@ -6,9 +6,9 @@ import Material.Icon as Icon
 
 import Alias exposing (Mdl, Renderer)
 import CSSModules exposing (cssmodule)
+import Messages exposing (Msg(..))
 import Model exposing (Model)
 import Routing exposing (Page(..))
-import Update exposing (Msg(..))
 
 
 render : Renderer

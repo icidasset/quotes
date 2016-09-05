@@ -1,5 +1,6 @@
 module Model exposing (..)
 
+import Array exposing (Array)
 import Dict exposing (Dict)
 import Material
 import Maybe exposing (Maybe, withDefault)
@@ -18,8 +19,12 @@ type alias UserDataModel =
 
 type alias SystemDataModel a =
   { a |
-    mdl : Material.Model
+
+    fetchInProgress : Bool
+  , fetchError : Bool
+  , mdl : Material.Model
   , page : Page
+  , quotes : Array (String, String)
   }
 
 
@@ -31,8 +36,11 @@ initial : Page -> Model
 initial page =
   { collectionUrl = ""
   , cssmodules = Dict.empty
+  , fetchError = False
+  , fetchInProgress = False
   , mdl = Material.model
   , page = page
+  , quotes = Array.empty
   }
 
 
@@ -49,8 +57,8 @@ toUserData model =
   { collectionUrl = model.collectionUrl }
 
 
-fromUserData : Model -> Maybe UserDataModel -> Model
-fromUserData model userData =
+fromUserData : Maybe UserDataModel -> Model -> Model
+fromUserData userData model =
   let
     userData' = withDefault initialUserData userData
   in
