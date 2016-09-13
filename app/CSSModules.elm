@@ -63,13 +63,13 @@ If the cssmodule is not found, it returns an empty `class` attribute.
     let
       cssmoduleName = "Main.component"
     in
-      div [ CSSModules.get model cssmoduleName ]
+      div [ CSSModules.cssmodule model cssmoduleName ]
 
 You can also use it like so:
 
     view model =
       let
-        cssmodule = (CSSModules.get model)
+        cssmodule = (CSSModules.cssmodule model)
       in
         div [ cssmodule "Main.component" ]
 -}

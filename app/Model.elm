@@ -4,6 +4,9 @@ import Array exposing (Array)
 import Dict exposing (Dict)
 import Material
 import Maybe exposing (Maybe, withDefault)
+import Random
+import Task exposing (toMaybe)
+import Time
 
 import CSSModules
 import Routing exposing (Page)
@@ -63,3 +66,28 @@ fromUserData userData model =
     userData' = withDefault initialUserData userData
   in
     { model | collectionUrl = userData'.collectionUrl }
+
+
+
+-- Quote helpers
+
+getRandomQuote : Array (String, String) -> Maybe { quote : String, author : String }
+getRandomQuote quotes =
+  let
+    index = fst (
+      Random.step
+        (Random.int 0 (Array.length(quotes) - 1))
+        (Random.initialSeed 44353464326)
+    )
+
+    quote = Array.get index quotes
+  in
+    case quote of
+      Just quote' ->
+        let
+          quote   = (fst quote')
+          author  = (snd quote')
+        in
+          Just { quote = quote, author = author }
+      Nothing ->
+        Nothing

@@ -1,6 +1,6 @@
 module Bits.Pages exposing (render)
 
-import Array
+import Array exposing (Array)
 import Regex exposing (contains, regex)
 import Html exposing (div, text)
 import Html.Events exposing (onClick)
@@ -11,11 +11,12 @@ import Material.Elevation as Elevation
 import Material.Options exposing (css, nop)
 import Material.Spinner as Loading
 import Material.Textfield as Textfield
-import Random
 
 import Alias exposing (Renderer)
+import Bits.Quote
 import CSSModules exposing (cssmodule)
 import Messages exposing (Msg(Mdl, SetCollectionUrl))
+import Model exposing (getRandomQuote)
 import Routing exposing (Page(..))
 
 
@@ -39,20 +40,11 @@ index model =
     text "No quotes found"
 
   else
-    -- let
-    --   index = fst (
-    --     Random.step
-    --       (Random.int 0 (Array.length(model.quotes) - 1))
-    --       (Random.initialSeed 535235345)
-    --   )
-    --
-    --   quote = Array.get index model.quotes
-    -- in
-    --   case quote of
-    --     Just quote' -> text quote'
-    --     Nothing -> text "No quotes found"
-
-    text (toString model.quotes)
+    case (getRandomQuote model.quotes) of
+      Just quote ->
+        Bits.Quote.render quote model
+      Nothing ->
+        text "No quotes found"
 
 
 
