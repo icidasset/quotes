@@ -1,4 +1,4 @@
-const { clone, metadata, read, rename, templates, write } = require('static-base-contrib');
+const { clone, copy, metadata, read, rename, templates, write } = require('static-base-contrib');
 const { exec, runWithMessageAndLimiter } = require('static-base-preset');
 const { resolve } = require('path');
 const css = require('./functions/css');
@@ -61,6 +61,15 @@ const htmlSequence = attr => runWithMessageAndLimiter
   (`${attr.priv.sourceDirectory}/Main.mustache`, attr.priv.root);
 
 
+const favIconsSequence = attr => runWithMessageAndLimiter
+  ('Copying favicons')
+  (attr.priv.changedPath)
+  (
+    [copy, attr.priv.buildDirectory]
+  )
+  (`./favicons/**/*.*`, attr.priv.root);
+
+
 /**
  * Exec
  */
@@ -68,6 +77,7 @@ exec([
   elmSequence,
   cssSequence,
   htmlSequence,
+  favIconsSequence,
 
 ], {
   rootDirectory: resolve(__dirname, '../'),
