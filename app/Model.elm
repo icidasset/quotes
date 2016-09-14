@@ -6,7 +6,7 @@ import Material
 import Maybe exposing (Maybe, withDefault)
 import Random
 import Task exposing (toMaybe)
-import Time
+import Time exposing (Time)
 
 import CSSModules
 import Routing exposing (Page)
@@ -25,6 +25,7 @@ type alias SystemDataModel a =
 
     fetchInProgress : Bool
   , fetchError : Bool
+  , initialTimestamp : Time
   , mdl : Material.Model
   , page : Page
   , quotes : Array (String, String)
@@ -41,6 +42,7 @@ initial page =
   , cssmodules = Dict.empty
   , fetchError = False
   , fetchInProgress = False
+  , initialTimestamp = 0.0
   , mdl = Material.model
   , page = page
   , quotes = Array.empty
@@ -71,16 +73,16 @@ fromUserData userData model =
 
 -- Quote helpers
 
-getRandomQuote : Array (String, String) -> Maybe { quote : String, author : String }
-getRandomQuote quotes =
+getRandomQuote : Model -> Maybe { quote : String, author : String }
+getRandomQuote model =
   let
     index = fst (
       Random.step
-        (Random.int 0 (Array.length(quotes) - 1))
-        (Random.initialSeed 44353464326)
+        (Random.int 0 (Array.length(model.quotes) - 1))
+        (Random.initialSeed (round model.initialTimestamp))
     )
 
-    quote = Array.get index quotes
+    quote = Array.get index model.quotes
   in
     case quote of
       Just quote' ->

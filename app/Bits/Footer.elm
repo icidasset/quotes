@@ -14,7 +14,7 @@ import Routing exposing (Page(..))
 render : Renderer
 render model =
   footer
-    [ cssmodule model "Footer.component" ]
+    [ cssmodule model "Footer.bit" ]
     [ navigation model ]
 
 

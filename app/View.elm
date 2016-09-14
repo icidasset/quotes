@@ -14,7 +14,7 @@ import Bits.Footer
 view : Model -> Html Msg
 view model =
   section
-    [ cssmodule model "Main.component" ]
+    [ cssmodule model "Main.bit" ]
     [
       (Bits.Footer.render model),
       (Bits.Pages.render model)

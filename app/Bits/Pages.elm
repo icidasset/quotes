@@ -2,7 +2,7 @@ module Bits.Pages exposing (render)
 
 import Array exposing (Array)
 import Regex exposing (contains, regex)
-import Html exposing (div, text)
+import Html exposing (Html, div, span, text)
 import Html.Events exposing (onClick)
 import Maybe exposing (withDefault)
 
@@ -16,7 +16,7 @@ import Alias exposing (Renderer)
 import Bits.Quote
 import CSSModules exposing (cssmodule)
 import Messages exposing (Msg(Mdl, SetCollectionUrl))
-import Model exposing (getRandomQuote)
+import Model exposing (Model, getRandomQuote)
 import Routing exposing (Page(..))
 
 
@@ -32,19 +32,39 @@ render model =
 
 index : Renderer
 index model =
-  if model.fetchInProgress == True then
-    Loading.spinner
-      [ Loading.active True ]
+  let
+    i = \msg -> info model (msg ++ " …") ""
+    iSub = \msg -> \sub -> info model (msg ++ " …") sub
+  in
+    if model.fetchInProgress == True then
+      Loading.spinner
+        [ Loading.active True ]
 
-  else if Array.length(model.quotes) == 0 then
-    text "No quotes found"
+    else if model.fetchError == True then
+      iSub "Could not fetch quotes" "Are you sure you put in the correct url?"
 
-  else
-    case (getRandomQuote model.quotes) of
-      Just quote ->
-        Bits.Quote.render quote model
-      Nothing ->
-        text "No quotes found"
+    else if Array.length(model.quotes) == 0 then
+      i "No quotes found"
+
+    else
+      case (getRandomQuote model) of
+        Just quote ->
+          Bits.Quote.render quote model
+        Nothing ->
+          i "No quotes found"
+
+
+{-| Show info (message).
+txt = Main text (large text)
+sub = Sub text (small text)
+-}
+info : Model -> String -> String -> Html Msg
+info model txt sub =
+  div
+    [ cssmodule model "Info.bit" ]
+    [ div [] [ text txt ]
+    , div [ cssmodule model "Info.sub-text" ] [ text sub ]
+    ]
 
 
 

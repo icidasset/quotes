@@ -3,6 +3,7 @@ module Messages exposing (..)
 import Array exposing (Array)
 import Http
 import Material
+import Time exposing (Time)
 
 
 type Msg =
@@ -12,3 +13,4 @@ type Msg =
   | GoToSettings
   | Mdl (Material.Msg Msg)
   | SetCollectionUrl String
+  | SetInitialTime Time

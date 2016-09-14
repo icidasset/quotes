@@ -1,5 +1,6 @@
 module Bits.Quote exposing (render)
 
+import ElmEscapeHtml
 import Html exposing (Html, div, text)
 
 import Alias exposing (Renderer)
@@ -15,12 +16,12 @@ render quote model =
 
   in
     div
-      [ cssmod "component" ]
+      [ cssmod "bit" ]
       [ div
           [ cssmod "quote" ]
           [ text quote.quote ]
 
       , div
           [ cssmod "author" ]
-          [ text quote.author ]
+          [ text ((ElmEscapeHtml.unescape "&mdash;&nbsp;&nbsp;") ++ quote.author) ]
       ]

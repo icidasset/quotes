@@ -4,6 +4,7 @@ import Dict
 import Material
 import Maybe exposing (Maybe)
 import Navigation
+import Time
 
 import Commands exposing (..)
 import CSSModules
@@ -58,6 +59,13 @@ updateModel msg model =
       in
         newModel ! [cmdKeepState, cmdFetchQuotes]
 
+    -- Time
+    SetInitialTime time ->
+      let
+        timestamp = Time.inMilliseconds time
+      in
+        { model | initialTimestamp = timestamp } ! []
+
     -- Material Design
     Mdl msg' ->
       Material.update msg' model
@@ -93,4 +101,7 @@ setInitialModel flag result =
     |> CSSModules.init flag.cssmodules
     |> fromUserData flag.userData
   in
-    { model | fetchInProgress = True } ! [fetchQuotes model]
+    { model | fetchInProgress = True } !
+    [ fetchQuotes model
+    , setInitialTime
+    ]
