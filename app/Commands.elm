@@ -1,14 +1,15 @@
-module Commands exposing (keepState, fetchQuotes, setInitialTime)
+module Commands exposing (fetchQuotes, keepState, setInitialTime, selectRandomQuote)
 
-import Array exposing (Array)
 import Http
-import Json.Decode as Json exposing ((:=), andThen, object1, object2)
+import Random
 import Task
 import Time
 
 import Messages exposing (Msg(..))
 import Model exposing (Model, toUserData)
 import Ports exposing (..)
+import Quotes.Types exposing (Quote, QuoteTuple)
+import Quotes.Utils
 
 
 
@@ -26,24 +27,14 @@ keepState model =
 
 fetchQuotes : Model -> Cmd Msg
 fetchQuotes model =
-  Task.perform FetchFail FetchSucceed (Http.get decodeQuotes model.collectionUrl)
+  Task.perform FetchFail FetchSucceed (Http.get Quotes.Utils.decode model.collectionUrl)
 
 
-decodeQuotes : Json.Decoder (Array (String, String))
-decodeQuotes =
-  Json.oneOf
-  [ ("data" := decodeQuotesArray)
-  , decodeQuotesArray
-  ]
-
-
-decodeQuotesArray : Json.Decoder (Array (String, String))
-decodeQuotesArray =
-  Json.array (
-    object2 (,)
-      ("quote" := Json.string)
-      ("author" := Json.string)
-  )
+selectRandomQuote : List Quote -> List String -> Cmd Msg
+selectRandomQuote collection collectionSeen =
+  Random.generate
+    (SetSelectedQuote)
+    (Quotes.Utils.randomGenerator collection collectionSeen)
 
 
 

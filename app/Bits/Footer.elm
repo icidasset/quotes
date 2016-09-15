@@ -22,7 +22,12 @@ navigation : Model -> Html Msg
 navigation model =
   case model.page of
     Index ->
-      div [] (button model "settings" GoToSettings "Show settings")
+      div [] (
+        List.concat [
+          (button model "settings" GoToSettings "Show settings"),
+          (button model "arrow_forward" SelectRandomQuote "Show another quote")
+        ]
+      )
 
     Settings ->
       div [] (button model "format_quote" GoToIndex "Show quotes")

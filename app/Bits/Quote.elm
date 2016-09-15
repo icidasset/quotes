@@ -7,9 +7,10 @@ import Alias exposing (Renderer)
 import CSSModules
 import Messages exposing (Msg)
 import Model exposing (Model)
+import Quotes.Types exposing (Quote)
 
 
-render : { quote : String, author : String } -> Model -> Html Msg
+render : Quote -> Model -> Html Msg
 render quote model =
   let
     cssmod = \x -> CSSModules.cssmodule model ("Quote." ++ x)

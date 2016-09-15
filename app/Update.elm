@@ -10,6 +10,7 @@ import Commands exposing (..)
 import CSSModules
 import Messages exposing (Msg(..))
 import Model exposing (Model, UserDataModel, fromUserData, initialUserData)
+import Quotes.Utils
 import Routing exposing (LocationResult, toPage)
 
 
@@ -34,21 +35,24 @@ updateModel msg model =
       model ! [Navigation.newUrl "/settings"]
 
     -- Go fetch
-    FetchSucceed value ->
-      { model |
-          fetchInProgress = False
-        , fetchError = False
-        , quotes = value
-      } ! []
-
-    FetchFail error ->
+    FetchSucceed collection ->
       let
-        log = Debug.log "error" error
+        collection' = List.map Quotes.Utils.tupleToRecord collection
+        collectionIds = List.map (\q -> q.id) collection'
+        cmdSelectRandomQuote = selectRandomQuote collection' model.collectionSeen
       in
         { model |
-            fetchInProgress = False
-          , fetchError = True
-        } ! []
+            collection = collection'
+          , collectionIds = collectionIds
+          , fetchInProgress = False
+          , fetchError = False
+        } ! [cmdSelectRandomQuote]
+
+    FetchFail error ->
+      { model |
+          fetchInProgress = False
+        , fetchError = True
+      } ! []
 
     -- User interactions
     SetCollectionUrl url ->
@@ -58,6 +62,19 @@ updateModel msg model =
         cmdFetchQuotes = fetchQuotes newModel
       in
         newModel ! [cmdKeepState, cmdFetchQuotes]
+
+    -- Selection process
+    SetSelectedQuote quote ->
+      let
+        newModel = { model |
+          collectionSeen = Quotes.Utils.buildSeenList model quote
+        , selectedQuote = quote
+        }
+      in
+        newModel ! [keepState newModel]
+
+    SelectRandomQuote ->
+      model ! [selectRandomQuote model.collection model.collectionSeen]
 
     -- Time
     SetInitialTime time ->

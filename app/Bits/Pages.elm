@@ -1,6 +1,5 @@
 module Bits.Pages exposing (render)
 
-import Array exposing (Array)
 import Regex exposing (contains, regex)
 import Html exposing (Html, div, span, text)
 import Html.Events exposing (onClick)
@@ -16,7 +15,8 @@ import Alias exposing (Renderer)
 import Bits.Quote
 import CSSModules exposing (cssmodule)
 import Messages exposing (Msg(Mdl, SetCollectionUrl))
-import Model exposing (Model, getRandomQuote)
+import Model exposing (Model)
+import Quotes.Types
 import Routing exposing (Page(..))
 
 
@@ -43,15 +43,13 @@ index model =
     else if model.fetchError == True then
       iSub "Could not fetch quotes" "Are you sure you put in the correct url?"
 
-    else if Array.length(model.quotes) == 0 then
+    else if List.length(model.collection) == 0 then
       i "No quotes found"
 
     else
-      case (getRandomQuote model) of
-        Just quote ->
-          Bits.Quote.render quote model
-        Nothing ->
-          i "No quotes found"
+      case model.selectedQuote of
+        Just quote -> Bits.Quote.render quote model
+        Nothing -> i "No quotes found"
 
 
 {-| Show info (message).
