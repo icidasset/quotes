@@ -1,4 +1,5 @@
 .DS_Store
 build
+deploy.sh
 elm-stuff
 node_modules
