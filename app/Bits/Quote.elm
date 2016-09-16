@@ -3,11 +3,10 @@ module Bits.Quote exposing (render)
 import ElmEscapeHtml
 import Html exposing (Html, div, text)
 
-import Alias exposing (Renderer)
 import CSSModules
 import Messages exposing (Msg)
 import Model exposing (Model)
-import Quotes.Types exposing (Quote)
+import Types exposing (Quote)
 
 
 render : Quote -> Model -> Html Msg

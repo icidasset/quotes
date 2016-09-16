@@ -2,8 +2,8 @@ module Messages exposing (..)
 
 import Http
 import Material
-import Quotes.Types exposing (Quote, QuoteTuple)
 import Time exposing (Time)
+import Types exposing (Quote, QuoteTuple)
 
 
 type Msg =
@@ -14,5 +14,4 @@ type Msg =
   | Mdl (Material.Msg Msg)
   | SelectRandomQuote
   | SetCollectionUrl String
-  | SetInitialTime Time
   | SetSelectedQuote (Maybe Quote)

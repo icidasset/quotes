@@ -3,11 +3,10 @@ module Model exposing (..)
 import Dict exposing (Dict)
 import Material
 import Maybe exposing (Maybe, withDefault)
-import Time exposing (Time)
 
 import CSSModules
-import Quotes.Types exposing (Quote)
 import Routing exposing (Page)
+import Types exposing (Quote)
 
 
 type alias Model = CSSModules.Model (SystemDataModel UserDataModel)
@@ -20,7 +19,6 @@ type alias SystemDataModel a =
   , collectionIds : List String
   , fetchInProgress : Bool
   , fetchError : Bool
-  , initialTimestamp : Time
   , mdl : Material.Model
   , page : Page
   , selectedQuote : Maybe Quote
@@ -50,7 +48,6 @@ initial page =
   , cssmodules = Dict.empty
   , fetchError = False
   , fetchInProgress = False
-  , initialTimestamp = 0.0
   , mdl = Material.model
   , page = page
   , selectedQuote = Nothing

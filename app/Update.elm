@@ -37,51 +37,54 @@ updateModel msg model =
     -- Go fetch
     FetchSucceed collection ->
       let
-        collection' = List.map Quotes.Utils.tupleToRecord collection
-        collectionIds = List.map (\q -> q.id) collection'
-        cmdSelectRandomQuote = selectRandomQuote collection' model.collectionSeen
+        col = List.map Quotes.Utils.tupleToRecord collection
+        ids = List.map (\q -> q.id) col
+        see = model.collectionSeen
       in
         { model |
-            collection = collection'
-          , collectionIds = collectionIds
-          , fetchInProgress = False
-          , fetchError = False
-        } ! [cmdSelectRandomQuote]
+          collection = col
+        , collectionIds = ids
+        , fetchInProgress = False
+        , fetchError = False
+        }
+
+        !
+
+        [selectRandomQuote col see]
 
     FetchFail error ->
-      { model |
+      let
+        new = { model |
           fetchInProgress = False
         , fetchError = True
-      } ! []
+        }
+      in
+        new ! []
 
     -- User interactions
     SetCollectionUrl url ->
       let
-        newModel = { model | collectionUrl = url }
-        cmdKeepState = keepState newModel
-        cmdFetchQuotes = fetchQuotes newModel
+        new = { model | collectionUrl = url }
       in
-        newModel ! [cmdKeepState, cmdFetchQuotes]
+        new ! [keepState new, fetchQuotes new]
 
     -- Selection process
     SetSelectedQuote quote ->
       let
-        newModel = { model |
+        new = { model |
           collectionSeen = Quotes.Utils.buildSeenList model quote
         , selectedQuote = quote
         }
       in
-        newModel ! [keepState newModel]
+        new ! [keepState new]
 
     SelectRandomQuote ->
-      model ! [selectRandomQuote model.collection model.collectionSeen]
-
-    -- Time
-    SetInitialTime time ->
       let
-        timestamp = Time.inMilliseconds time
+        col = model.collection
+        see = model.collectionSeen
+        new = model
       in
-        { model | initialTimestamp = timestamp } ! []
+        new ! [selectRandomQuote col see]
 
     -- Material Design
     Mdl msg' ->
@@ -119,6 +122,4 @@ setInitialModel flag result =
     |> fromUserData flag.userData
   in
     { model | fetchInProgress = True } !
-    [ fetchQuotes model
-    , setInitialTime
-    ]
+    [ fetchQuotes model ]

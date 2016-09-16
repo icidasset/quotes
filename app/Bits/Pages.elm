@@ -11,16 +11,14 @@ import Material.Options exposing (css, nop)
 import Material.Spinner as Loading
 import Material.Textfield as Textfield
 
-import Alias exposing (Renderer)
 import Bits.Quote
 import CSSModules exposing (cssmodule)
 import Messages exposing (Msg(Mdl, SetCollectionUrl))
 import Model exposing (Model)
-import Quotes.Types
 import Routing exposing (Page(..))
 
 
-render : Renderer
+render : Model -> Html Msg
 render model =
   case model.page of
     Index -> index model
@@ -30,7 +28,7 @@ render model =
 
 -- Index
 
-index : Renderer
+index : Model -> Html Msg
 index model =
   let
     i = \msg -> info model (msg ++ " …") ""
@@ -69,7 +67,7 @@ info model txt sub =
 -- Settings
 
 
-settings : Renderer
+settings : Model -> Html Msg
 settings model =
   Card.view
     [ Elevation.e2 ]

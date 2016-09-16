@@ -7,7 +7,7 @@ import Random exposing (Generator)
 import Random.Array
 import Result
 
-import Quotes.Types exposing (..)
+import Types exposing (Quote, QuoteTuple)
 
 
 {-| Convert a QuoteTuple to a Quote

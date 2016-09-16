@@ -4,14 +4,14 @@ import Html exposing (Html, div, footer, text)
 import Material.Button as Button
 import Material.Icon as Icon
 
-import Alias exposing (Mdl, Renderer)
 import CSSModules exposing (cssmodule)
 import Messages exposing (Msg(..))
 import Model exposing (Model)
 import Routing exposing (Page(..))
+import Types exposing (Mdl)
 
 
-render : Renderer
+render : Model -> Html Msg
 render model =
   footer
     [ cssmodule model "Footer.bit" ]

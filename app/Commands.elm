@@ -1,4 +1,4 @@
-module Commands exposing (fetchQuotes, keepState, setInitialTime, selectRandomQuote)
+module Commands exposing (fetchQuotes, keepState, selectRandomQuote)
 
 import Http
 import Random
@@ -8,8 +8,8 @@ import Time
 import Messages exposing (Msg(..))
 import Model exposing (Model, toUserData)
 import Ports exposing (..)
-import Quotes.Types exposing (Quote, QuoteTuple)
 import Quotes.Utils
+import Types exposing (Quote, QuoteTuple)
 
 
 
@@ -35,16 +35,3 @@ selectRandomQuote collection collectionSeen =
   Random.generate
     (SetSelectedQuote)
     (Quotes.Utils.randomGenerator collection collectionSeen)
-
-
-
--- Time
-
-
-setInitialTime : Cmd Msg
-setInitialTime =
-  Task.perform noOp SetInitialTime Time.now
-
-
-noOp =
-  (\_ -> Debug.crash "")
