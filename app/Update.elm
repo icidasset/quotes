@@ -105,11 +105,12 @@ updateModel msg model =
       let
         stX = withDefault 0 model.touchPositionX
         enX = touchEvent.clientX
+        dfX = abs (enX - stX)
         dir = TE.getDirectionX stX enX
         pge = model.page
         new = model
       in
-        if (pge == Index) && (dir == Left) then
+        if (pge == Index) && (dfX > 50) && (dir == Left) then
           new ! [nextQuote new]
         else
           new ! []
