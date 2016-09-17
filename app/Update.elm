@@ -110,7 +110,7 @@ updateModel msg model =
         pge = model.page
         new = model
       in
-        if (pge == Index) && (dfX > 50) && (dir == Left) then
+        if (pge == Index) && (dfX > 100) && (dir == Left) then
           new ! [nextQuote new]
         else
           new ! []
