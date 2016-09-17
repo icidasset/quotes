@@ -2,6 +2,7 @@ const { clone, copy, metadata, read, rename, templates, write } = require('stati
 const { exec, runWithMessageAndLimiter } = require('static-base-preset');
 const { resolve } = require('path');
 const css = require('./functions/css');
+const electron = require('./functions/electron');
 const elm = require('./functions/elm');
 const Mustache = require('mustache');
 
@@ -23,6 +24,7 @@ const storecssmodules = files => {
 const render = (template, data) => Mustache.render(template, data);
 
 
+
 /**
  * Sequences
  */
@@ -30,7 +32,11 @@ const elmSequence = attr => runWithMessageAndLimiter
   ('Building Elm')
   (attr.priv.changedPath, `${attr.priv.sourceDirectory}/**/*.elm`)
   (
-    [elm, `${attr.priv.buildDirectory}/application.js`]
+    [
+      elm,
+      `${attr.priv.buildDirectory}/application.js`,
+      { minify: process.argv.includes('--minify') }
+    ]
   )
   (`${attr.priv.sourceDirectory}/Main.elm`, attr.priv.root);
 
@@ -70,6 +76,32 @@ const favIconsSequence = attr => runWithMessageAndLimiter
   (`./favicons/**/*.*`, attr.priv.root);
 
 
+// Electron
+
+const electronSetupSequence = attr => runWithMessageAndLimiter
+  ('Setting up Electron')
+  (attr.priv.changedPath)
+  (
+    [read],
+    [rename, 'index.js', 'electron.js'],
+    [write, attr.priv.buildDirectory]
+  )
+  (`./electron/**/*`, attr.priv.root);
+
+
+const electronPackage = attr => runWithMessageAndLimiter
+  ('Build Electron packages')
+  (attr.priv.changedPath)
+  (
+    [electron, './build-electron', { dir: attr.priv.buildDirectory }]
+  )
+  ();
+
+
+const emptySequence = _ => Promise.resolve([]);
+
+
+
 /**
  * Exec
  */
@@ -78,6 +110,8 @@ exec([
   cssSequence,
   htmlSequence,
   favIconsSequence,
+  electronSetupSequence,
+  process.argv.includes('--pack') ? electronPackage : emptySequence,
 
 ], {
   rootDirectory: resolve(__dirname, '../'),

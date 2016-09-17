@@ -1,13 +1,17 @@
 const { spawn } = require('child_process');
 
 
-module.exports = function elm(files, outputPath) {
+module.exports = function elm(files, outputPath, options) {
+  const opts = options || {};
   const promises = files.map(f => {
     return new Promise((resolve, reject) => {
+      let args;
+
+      args = [`${f.wd}/${f.path}`, `--output`, outputPath, `--yes`];
+      // TODO: args = opts.minify ? args.concat(['--minify']) : args;
+
       const s = spawn(
-        `elm-make`,
-        [`${f.wd}/${f.path}`, `--output`, outputPath, `--yes`],
-        { cwd: f.root, stdio: "inherit" }
+        `elm-make`, args, { cwd: f.root, stdio: "inherit" }
       );
 
       s.on('error', reject);

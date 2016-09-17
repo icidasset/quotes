@@ -5,7 +5,7 @@ const postcss = require('postcss');
 
 
 
-const process = (files) => files.map(file => {
+const process = (files) => files.map(f => {
   var cssmodules;
 
   return postcss([
@@ -39,8 +39,8 @@ const process = (files) => files.map(file => {
       getJSON: (_, obj) => cssmodules = obj
     }),
   ])
-  .process(file.content, { from: file.entirePath })
-  .then(result => extend(file, { content: result.css, cssmodules }));
+  .process(f.content, { from: f.entirePath })
+  .then(result => extend(f, { content: result.css, cssmodules }));
 });
 
 
