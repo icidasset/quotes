@@ -1,13 +1,17 @@
-@value vars: "../Lib/Variables.pcss";
-@value serifFont from vars;
+@value medium as bp-medium, large as bp-large from "../Lib/Breakpoints.pcss";
+@value serifFont from "../Lib/Fonts.pcss";
 
 
 .bit {
   font-family: serifFont;
   line-height: 1.25;
-  margin: grid(3);
-  min-width: rem(500px);
-  width: calc(90vw - 100vh);
+  margin: grid(3) grid(3) grid(10);
+  text-align: justify;
+
+  @media bp-medium {
+    min-width: rem(600px);
+    width: calc(90vw - 75vh);
+  }
 }
 
 .quote {
