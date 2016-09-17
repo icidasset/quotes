@@ -21,7 +21,11 @@ render model =
     [
       div
         [ cssmodule model "Footer.info" ]
-        [ info (count model) ]
+        [ if (model.fetchError == False) && (model.page == Index) then
+            info (count model)
+          else
+            text ""
+        ]
     , footer
         [ cssmodule model "Footer.bit" ]
         [ navigation model ]
@@ -72,7 +76,7 @@ count model =
     index = (List.length model.collectionSeen)
     total = (List.length model.collection)
   in
-    if (total > 0) && (model.fetchError == False) then
+    if total > 0 then
       (toString index) ++ " of " ++ (toString total)
     else
       ""

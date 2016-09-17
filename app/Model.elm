@@ -23,6 +23,7 @@ type alias SystemDataModel a =
   , mdl : Material.Model
   , page : Page
   , selectedQuote : Maybe Quote
+  , touchPositionX : Maybe Float
   }
 
 
@@ -53,6 +54,7 @@ initial page =
   , mdl = Material.model
   , page = page
   , selectedQuote = Nothing
+  , touchPositionX = Nothing
   }
 
 

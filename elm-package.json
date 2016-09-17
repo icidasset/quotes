@@ -15,6 +15,7 @@
         "elm-lang/navigation": "1.0.0 <= v < 2.0.0",
         "evancz/elm-http": "3.0.1 <= v < 4.0.0",
         "evancz/url-parser": "1.0.0 <= v < 2.0.0",
+        "knledg/touch-events": "1.0.1 <= v < 2.0.0",
         "marcosh/elm-html-to-unicode": "1.0.1 <= v < 2.0.0",
         "truqu/elm-base64": "1.0.4 <= v < 2.0.0"
     },

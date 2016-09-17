@@ -2,16 +2,17 @@ module Update exposing (..)
 
 import Dict
 import Material
-import Maybe exposing (Maybe)
+import Maybe exposing (Maybe, withDefault)
 import Navigation
 import Time
+import TouchEvents as TE exposing (Direction(..))
 
 import Commands exposing (..)
 import CSSModules
 import Messages exposing (Msg(..))
 import Model exposing (Model, UserDataModel, fromUserData, initialUserData)
 import Quotes.Utils
-import Routing exposing (LocationResult, toPage)
+import Routing exposing (Page(..), LocationResult, toPage)
 
 
 type alias ProgramFlag =
@@ -83,21 +84,44 @@ updateModel msg model =
         !
 
         if (quote == Nothing) && (model.collectionIsEmpty == False) then
-          [keepState new, selectRandomQuote new.collection new.collectionSeen]
+          [keepState new, nextQuote new]
         else
           [keepState new]
 
     SelectRandomQuote ->
       let
-        col = model.collection
-        see = model.collectionSeen
         new = model
       in
-        new ! [selectRandomQuote col see]
+        new ! [nextQuote new]
+
+    -- Touch events
+    OnTouchStart touchEvent ->
+      let
+        new = { model | touchPositionX = Just touchEvent.clientX }
+      in
+        new ! []
+
+    OnTouchEnd touchEvent ->
+      let
+        stX = withDefault 0 model.touchPositionX
+        enX = touchEvent.clientX
+        dir = TE.getDirectionX stX enX
+        pge = model.page
+        new = model
+      in
+        if (pge == Index) && (dir == Left) then
+          new ! [nextQuote new]
+        else
+          new ! []
 
     -- Material Design
     Mdl msg' ->
       Material.update msg' model
+
+
+nextQuote : Model -> Cmd Msg
+nextQuote model =
+  selectRandomQuote model.collection model.collectionSeen
 
 
 

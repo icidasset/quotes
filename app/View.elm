@@ -2,9 +2,10 @@ module View exposing (..)
 
 import Html exposing (Html, section, text)
 import Html.Attributes exposing (..)
+import TouchEvents as TE
 
 import CSSModules exposing (cssmodule)
-import Messages exposing (Msg)
+import Messages exposing (Msg(..))
 import Model exposing (Model)
 
 import Bits.Pages
@@ -14,7 +15,10 @@ import Bits.Footer
 view : Model -> Html Msg
 view model =
   section
-    [ cssmodule model "Main.bit" ]
+    [ cssmodule model "Main.bit"
+    , TE.onTouchEvent TE.TouchStart OnTouchStart
+    , TE.onTouchEvent TE.TouchEnd OnTouchEnd
+    ]
     [
       (Bits.Footer.render model),
       (Bits.Pages.render model)
