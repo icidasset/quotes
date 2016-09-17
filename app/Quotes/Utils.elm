@@ -7,6 +7,7 @@ import Random exposing (Generator)
 import Random.Array
 import Result
 
+import Model exposing (Model)
 import Types exposing (Quote, QuoteTuple)
 
 
@@ -50,6 +51,7 @@ Should:
   + Add the id of a given quote (if there is one) to the list
   + Clear list if given quote is Nothing
 -}
+buildSeenList : Model -> Maybe Quote -> List String
 buildSeenList model quote =
   case quote of
     Just quote' ->

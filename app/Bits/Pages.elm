@@ -41,7 +41,7 @@ index model =
     else if model.fetchError == True then
       iSub "Could not fetch quotes" "Are you sure you put in the correct url?"
 
-    else if List.length(model.collection) == 0 then
+    else if model.collectionIsEmpty then
       i "No quotes found"
 
     else

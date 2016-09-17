@@ -40,10 +40,12 @@ updateModel msg model =
         col = List.map Quotes.Utils.tupleToRecord collection
         ids = List.map (\q -> q.id) col
         see = model.collectionSeen
+        len = (List.length ids) == 0
       in
         { model |
           collection = col
         , collectionIds = ids
+        , collectionIsEmpty = len
         , fetchInProgress = False
         , fetchError = False
         }
@@ -73,10 +75,17 @@ updateModel msg model =
       let
         new = { model |
           collectionSeen = Quotes.Utils.buildSeenList model quote
-        , selectedQuote = quote
+        , selectedQuote = if quote == Nothing then model.selectedQuote else quote
         }
       in
-        new ! [keepState new]
+        new
+
+        !
+
+        if (quote == Nothing) && (model.collectionIsEmpty == False) then
+          [keepState new, selectRandomQuote new.collection new.collectionSeen]
+        else
+          [keepState new]
 
     SelectRandomQuote ->
       let

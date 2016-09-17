@@ -17,6 +17,7 @@ type alias SystemDataModel a =
 
     collection : List Quote
   , collectionIds : List String
+  , collectionIsEmpty : Bool
   , fetchInProgress : Bool
   , fetchError : Bool
   , mdl : Material.Model
@@ -43,6 +44,7 @@ initial : Page -> Model
 initial page =
   { collection = []
   , collectionIds = []
+  , collectionIsEmpty = True
   , collectionSeen = []
   , collectionUrl = defaultCollectionUrl
   , cssmodules = Dict.empty
