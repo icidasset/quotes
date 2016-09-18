@@ -4,6 +4,7 @@ const { resolve } = require('path');
 const css = require('./functions/css');
 const electron = require('./functions/electron');
 const elm = require('./functions/elm');
+const minify = require('./functions/minify');
 const Mustache = require('mustache');
 
 
@@ -32,13 +33,20 @@ const elmSequence = attr => runWithMessageAndLimiter
   ('Building Elm')
   (attr.priv.changedPath, `${attr.priv.sourceDirectory}/**/*.elm`)
   (
-    [
-      elm,
-      `${attr.priv.buildDirectory}/application.js`,
-      { minify: process.argv.includes('--minify') }
-    ]
+    [elm, `${attr.priv.buildDirectory}/application.js`]
   )
   (`${attr.priv.sourceDirectory}/Main.elm`, attr.priv.root);
+
+
+const minifyElmSequence = attr => runWithMessageAndLimiter
+  ('Minifying compiled Elm code')
+  (attr.priv.changedPath)
+  (
+    read,
+    minify,
+    [write, attr.priv.buildDirectory]
+  )
+  (`${attr.priv.buildDirectory}/application.js`, attr.priv.root);
 
 
 const cssSequence = attr => runWithMessageAndLimiter
@@ -107,9 +115,12 @@ const emptySequence = _ => Promise.resolve([]);
  */
 exec([
   elmSequence,
+  process.argv.includes('--minify') ? minifyElmSequence : emptySequence,
+
   cssSequence,
   htmlSequence,
   favIconsSequence,
+
   electronSetupSequence,
   process.argv.includes('--pack') ? electronPackage : emptySequence,
 

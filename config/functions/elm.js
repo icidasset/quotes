@@ -8,7 +8,6 @@ module.exports = function elm(files, outputPath, options) {
       let args;
 
       args = [`${f.wd}/${f.path}`, `--output`, outputPath, `--yes`];
-      // TODO: args = opts.minify ? args.concat(['--minify']) : args;
 
       const s = spawn(
         `elm-make`, args, { cwd: f.root, stdio: "inherit" }

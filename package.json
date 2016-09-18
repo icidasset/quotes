@@ -20,6 +20,7 @@
     "electron": "^1.4.0",
     "electron-packager": "^8.0.0",
     "enfscopy": "^0.1.0",
+    "google-closure-compiler-js": "^20160916.0.0",
     "lodash": "^4.15.0",
     "mustache": "^2.2.1",
     "postcss": "^5.1.2",
