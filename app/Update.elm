@@ -115,20 +115,30 @@ updateModel msg model =
     -- Touch events
     OnTouchStart touchEvent ->
       let
-        new = { model | touchPositionX = Just touchEvent.clientX }
+        new = { model |
+          touchPositionX = Just touchEvent.clientX
+        , touchPositionY = Just touchEvent.clientY
+        }
       in
         new ! []
 
     OnTouchEnd touchEvent ->
       let
-        stX = withDefault 0 model.touchPositionX
-        enX = touchEvent.clientX
-        dfX = abs (enX - stX)
-        dir = TE.getDirectionX stX enX
-        pge = model.page
+        startX = withDefault 0 model.touchPositionX
+        startY = withDefault 0 model.touchPositionY
+
+        endX = touchEvent.clientX
+        endY = touchEvent.clientY
+
+        diffX = abs (endX - startX)
+        diffY = abs (endY - startY)
+
+        horizontalDirection = TE.getDirectionX startX endX
+
+        pag = model.page
         new = model
       in
-        if (pge == Index) && (dfX > 100) && (dir == Left) then
+        if (pag == Index) && (diffY <= 100) && (diffX >= 125) && (horizontalDirection == Left) then
           new ! [nextQuote new]
         else
           new ! []

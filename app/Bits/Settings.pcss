@@ -1,10 +1,12 @@
 @value large from "../Lib/Breakpoints.pcss";
+@value settings as zindex from "../Lib/Zindex.pcss";
 
 
 .bit:global(.mdl-card) {
-  margin-left: grid(3);
-  margin-right: grid(3);
+  margin: grid(3) grid(3) grid(10);
+  position: relative;
   width: auto;
+  z-index: zindex;
 
   @media large {
     min-width: 330px;

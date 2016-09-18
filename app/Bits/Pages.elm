@@ -39,7 +39,7 @@ index model =
         [ Loading.active True ]
 
     else if model.fetchError == True then
-      iSub "Could not fetch quotes" "Are you sure you put in the correct url?"
+      iSub "Could not fetch quotes" "Are you sure you put in the correct url? Or maybe you lost your connection?"
 
     else if model.collectionIsEmpty then
       i "No quotes found"

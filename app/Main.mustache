@@ -4,7 +4,7 @@
 
   <meta charset="utf-8" />
   <meta content="IE=edge" http-equiv="X-UA-Compatible" />
-  <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 
   <title>Quotes</title>
 
@@ -26,9 +26,34 @@
 </head>
 <body>
 
+  <noscript>
+    <p class="mdl-typography--headline mdl-color-text--red-A200">
+      Hi there awesome person that wants to use my app.
+      I'm sad to say that this doesn't work without Javascript enabled.
+    </p>
+  </noscript>
+
+
+  <script>
+    var pageLoader;
+
+    pageLoader = document.createElement('div');
+    pageLoader.id = "page-loader";
+    pageLoader.innerHTML = "Loading …";
+
+    document.body.appendChild(pageLoader);
+  </script>
+
+
   <script src="application.js"></script>
+
+
   <script>
     var storageKey = "quotesUserData";
+
+    document.body.removeChild(
+      document.getElementById('page-loader')
+    );
 
     var app = Elm.Main.fullscreen({
       cssmodules: {{{cssmodules}}},

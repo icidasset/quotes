@@ -1,3 +1,4 @@
+@value medium from "Lib/Breakpoints.pcss";
 @value textColor from "Lib/Colors.pcss";
 
 
@@ -20,4 +21,16 @@ body {
   color: textColor;
   font-size: 1rem;
   max-width: 100vw;
+}
+
+
+noscript p {
+  margin: grid(3);
+  max-width: rem(500px);
+  text-align: justify;
+
+  & br {
+    display: none;
+    @media medium { display: inline; }
+  }
 }

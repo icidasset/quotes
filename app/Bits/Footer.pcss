@@ -1,8 +1,12 @@
+@value footer as zindex from "../Lib/Zindex.pcss";
+
+
 .bit {
   bottom: grid(3);
   left: 50%;
   position: fixed;
   transform: translateX(-50%);
+  z-index: zindex;
 
   & button {
     color: #aaa;

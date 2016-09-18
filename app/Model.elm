@@ -27,6 +27,7 @@ type alias SystemDataModel a =
   , page : Page
   , selectedQuote : Maybe Quote
   , touchPositionX : Maybe Float
+  , touchPositionY : Maybe Float
   }
 
 
@@ -59,6 +60,7 @@ initial page =
   , page = page
   , selectedQuote = Nothing
   , touchPositionX = Nothing
+  , touchPositionY = Nothing
   }
 
 
