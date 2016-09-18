@@ -1,10 +1,12 @@
 module Model exposing (..)
 
+import Debounce
 import Dict exposing (Dict)
 import Material
 import Maybe exposing (Maybe, withDefault)
 
 import CSSModules
+import Messages exposing (Msg)
 import Routing exposing (Page)
 import Types exposing (Quote)
 
@@ -18,6 +20,7 @@ type alias SystemDataModel a =
     collection : List Quote
   , collectionIds : List String
   , collectionIsEmpty : Bool
+  , fetchDebounce : Debounce.Model Msg
   , fetchInProgress : Bool
   , fetchError : Bool
   , mdl : Material.Model
@@ -49,6 +52,7 @@ initial page =
   , collectionSeen = []
   , collectionUrl = defaultCollectionUrl
   , cssmodules = Dict.empty
+  , fetchDebounce = Debounce.init
   , fetchError = False
   , fetchInProgress = False
   , mdl = Material.model

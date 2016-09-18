@@ -1,5 +1,6 @@
 module Messages exposing (..)
 
+import Debounce
 import Http
 import Material
 import Time exposing (Time)
@@ -8,7 +9,8 @@ import Types exposing (Quote, QuoteTuple)
 
 
 type Msg =
-  FetchFail Http.Error
+  DebounceFetch (Debounce.Msg Msg)
+  | FetchFail Http.Error
   | FetchSucceed (List QuoteTuple)
   | GoToIndex
   | GoToSettings

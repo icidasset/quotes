@@ -8,6 +8,7 @@
     ],
     "exposed-modules": [],
     "dependencies": {
+        "athanclark/elm-debouncer": "3.0.1 <= v < 4.0.0",
         "debois/elm-mdl": "7.6.0 <= v < 8.0.0",
         "elm-community/random-extra": "1.0.0 <= v < 2.0.0",
         "elm-lang/core": "4.0.5 <= v < 5.0.0",

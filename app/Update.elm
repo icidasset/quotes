@@ -1,10 +1,12 @@
 module Update exposing (..)
 
+import Debounce
 import Dict
 import Material
 import Maybe exposing (Maybe, withDefault)
 import Navigation
-import Time
+import Task
+import Time exposing (millisecond)
 import TouchEvents as TE exposing (Direction(..))
 
 import Commands exposing (..)
@@ -64,12 +66,22 @@ updateModel msg model =
       in
         new ! []
 
+    DebounceFetch a ->
+      let
+        (deb, eff) = Debounce.update (1000 * millisecond) a model.fetchDebounce
+        new = { model | fetchDebounce = deb }
+      in
+        new ! [ Cmd.map (\r -> case r of
+                  Err b -> DebounceFetch b
+                  Ok  b -> b) eff ]
+
     -- User interactions
     SetCollectionUrl url ->
       let
-        new = { model | collectionUrl = url }
+        new = { model | collectionUrl = url, fetchInProgress = True }
+        ftc = makeCmd (DebounceFetch (Debounce.Bounce (fetchQuotes new)))
       in
-        new ! [keepState new, fetchQuotes new]
+        new ! [keepState new, ftc]
 
     -- Selection process
     SetSelectedQuote quote ->
@@ -123,6 +135,11 @@ updateModel msg model =
 nextQuote : Model -> Cmd Msg
 nextQuote model =
   selectRandomQuote model.collection model.collectionSeen
+
+
+makeCmd : a -> Cmd a
+makeCmd =
+  Task.perform (Debug.crash << toString) identity << Task.succeed
 
 
 
