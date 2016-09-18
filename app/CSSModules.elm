@@ -1,4 +1,4 @@
-module CSSModules exposing (Css, Flag, Model, Signature, cssmodule, decode, init)
+module CSSModules exposing (Css, Flag, Model, Signature, class, cssmodule, decode, init)
 
 {-| This library provides a way to use (PostCSS) CSS Modules with Elm.
 
@@ -17,7 +17,7 @@ which has the following format:
 
 import Dict exposing (Dict)
 import Html exposing (Attribute)
-import Html.Attributes exposing (class)
+import Html.Attributes
 import Json.Decode exposing (Decoder, dict, string)
 
 
@@ -58,7 +58,19 @@ decode flag =
 
 
 {-| Get a className for a given cssmodule.
-If the cssmodule is not found, it returns an empty `class` attribute.
+If the cssmodule is not found, it returns an empty string.
+-}
+class : Model a -> String -> String
+class model moduleName =
+  let
+    className = Dict.get moduleName (model.cssmodules)
+  in
+    case className of
+      Just cn -> cn
+      Nothing -> ""
+
+
+{-| Same as `class`, but returns a `Html.Attribute`.
 
     let
       cssmoduleName = "Main.component"
@@ -75,9 +87,4 @@ You can also use it like so:
 -}
 cssmodule : Model a -> Signature b
 cssmodule model moduleName =
-  let
-    className = Dict.get moduleName (model.cssmodules)
-  in
-    case className of
-      Just cn -> class cn
-      Nothing -> class ""
+  Html.Attributes.class (class model moduleName)

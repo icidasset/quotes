@@ -1,0 +1,18 @@
+@value large from "../Lib/Breakpoints.pcss";
+
+
+.bit:global(.mdl-card) {
+  margin-left: grid(3);
+  margin-right: grid(3);
+  width: auto;
+
+  @media large {
+    min-width: 330px;
+    width: 42vw;
+  }
+
+  & :global(.mdl-textfield) {
+    box-sizing: border-box;
+    width: 100%;
+  }
+}

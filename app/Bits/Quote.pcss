@@ -1,4 +1,4 @@
-@value medium as bp-medium, large as bp-large from "../Lib/Breakpoints.pcss";
+@value medium from "../Lib/Breakpoints.pcss";
 @value serifFont from "../Lib/Fonts.pcss";
 
 
@@ -8,7 +8,7 @@
   margin: grid(3) grid(3) grid(10);
   text-align: justify;
 
-  @media bp-medium {
+  @media medium {
     min-width: rem(600px);
     width: calc(90vw - 75vh);
   }

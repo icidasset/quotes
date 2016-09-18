@@ -50,7 +50,9 @@ navigation model =
     Settings ->
       div
         []
-        [ button model "format_quote" GoToIndex "Show quotes" ]
+        [ button model "format_quote" GoToIndex "Show quotes"
+        , button model "settings_backup_restore" ResetSeen "Reset quotes history (counter)"
+        ]
 
 
 button : Model -> String -> Msg -> String -> Html Msg

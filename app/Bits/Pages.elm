@@ -1,13 +1,13 @@
 module Bits.Pages exposing (render)
 
 import Regex exposing (contains, regex)
-import Html exposing (Html, div, span, text)
+import Html exposing (Html, code, div, p, pre, span, text)
 import Html.Events exposing (onClick)
 import Maybe exposing (withDefault)
 
 import Material.Card as Card
 import Material.Elevation as Elevation
-import Material.Options exposing (css, nop)
+import Material.Options as Options exposing (cs, css, nop)
 import Material.Spinner as Loading
 import Material.Textfield as Textfield
 
@@ -70,14 +70,33 @@ info model txt sub =
 settings : Model -> Html Msg
 settings model =
   Card.view
-    [ Elevation.e2 ]
+    [ cs (CSSModules.class model "Settings.bit")
+    , Elevation.e2
+    ]
     [ Card.title
         []
         [ Card.head [] [ text "Settings" ] ]
 
+    , Card.text
+        []
+        [ text "Here you can set the url to the collection of quotes. "
+        , text "Which points to a JSON document with the following structure:"
+        , pre
+            []
+            [ code [] [ text "[{ quote: \"Quote\", author: \"Author\" }, ...]" ] ]
+        , text "Or:"
+        , pre
+            []
+            [ code [] [ text "{ data: [{ quote: \"Quote\", author: \"Author\" }, ...] }" ] ]
+        ]
+
     , Card.actions
-        [ css "padding" "8px 16px" ]
-        [ Textfield.render Mdl [0] model.mdl
+        [ css "padding" "8px 16px", Card.border ]
+        [ p
+            []
+            []
+
+        , Textfield.render Mdl [0] model.mdl
           [ Textfield.label "Quotes JSON URL"
           , Textfield.floatingLabel
           , Textfield.text'

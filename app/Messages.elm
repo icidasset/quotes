@@ -17,6 +17,7 @@ type Msg =
   | Mdl (Material.Msg Msg)
   | OnTouchStart TE.Touch
   | OnTouchEnd TE.Touch
+  | ResetSeen
   | SelectRandomQuote
   | SetCollectionUrl String
   | SetSelectedQuote (Maybe Quote)

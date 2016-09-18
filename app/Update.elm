@@ -106,6 +106,12 @@ updateModel msg model =
       in
         new ! [nextQuote new]
 
+    ResetSeen ->
+      let
+        new = { model | collectionSeen = [] }
+      in
+        new ! [nextQuote new]
+
     -- Touch events
     OnTouchStart touchEvent ->
       let
