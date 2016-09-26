@@ -6,8 +6,8 @@ module.exports = function minify(files) {
   return files.map(f => {
     const out = compile({
       jsCode: [{ src: f.content }],
-      compilationLevel: 'ADVANCED',
       assumeFunctionWrapper: true,
+      languageIn: 'ECMASCRIPT5'
     });
 
     return extend(f, {
