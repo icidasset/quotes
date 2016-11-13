@@ -1,4 +1,4 @@
-module Model.Init exposing (..)
+module Model.Init exposing (withProgramFlags)
 
 import Debounce
 import Dict
