@@ -1,8 +1,5 @@
-module Types exposing (..)
-
-import Material
+module Quotes.Types exposing (..)
 
 
-type alias Mdl = Material.Model
 type alias Quote = { quote : String, author : String, id: String }
 type alias QuoteTuple = (String, String)

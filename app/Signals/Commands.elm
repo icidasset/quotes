@@ -1,15 +1,15 @@
-module Commands exposing (fetchQuotes, keepState, selectRandomQuote)
+module Signals.Commands exposing (..)
 
 import Http
 import Random
 import Task
 import Time
 
-import Messages exposing (Msg(..))
-import Model exposing (Model, toUserData)
-import Ports exposing (..)
+import Model.Types exposing (Model, Msg(..))
+import Model.Utils exposing (toUserData)
+import Quotes.Types exposing (Quote, QuoteTuple)
 import Quotes.Utils
-import Types exposing (Quote, QuoteTuple)
+import Signals.Ports exposing (..)
 
 
 

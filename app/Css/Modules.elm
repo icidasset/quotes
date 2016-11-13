@@ -1,4 +1,4 @@
-module CSSModules exposing (Css, Flag, Model, Signature, class, cssmodule, decode, init)
+module Css.Modules exposing (Css, Flag, Model, Signature, class, cssmodule, decode, init)
 
 {-| This library provides a way to use (PostCSS) CSS Modules with Elm.
 
@@ -31,12 +31,12 @@ type alias Signature a = String -> Attribute a
 {-| The init function used with a `Program`.
 Used like so:
 
-    init : Maybe CSSModules.Flag -> (Model, Cmd Msg)
-    init possibleFlag = CSSModules.init possibleFlag initialModelOfYourApp ! []
+    init : Maybe Css.Modules.Flag -> (Model, Cmd Msg)
+    init possibleFlag = Css.Modules.init possibleFlag initialModelOfYourApp ! []
 
-Where `initialModelOfYourApp` is a record that uses `CSSModules.Model`.
+Where `initialModelOfYourApp` is a record that uses `Css.Modules.Model`.
 
-    initialModelOfYourApp : CSSModules.Model PrivateModel
+    initialModelOfYourApp : Css.Modules.Model PrivateModel
     initialModelOfYourApp =
       { cssmodules = Dict.empty
       , somethingOfPrivateModel = ...
@@ -49,7 +49,7 @@ init maybe model =
     Nothing   -> { model | cssmodules = Dict.empty }
 
 
-{-| Decode the `CSSModules.Flag`.
+{-| Decode the `Css.Modules.Flag`.
 -}
 decode : Flag -> Dictionary
 decode flag =
@@ -75,13 +75,13 @@ class model moduleName =
     let
       cssmoduleName = "Main.component"
     in
-      div [ CSSModules.cssmodule model cssmoduleName ]
+      div [ Css.Modules.cssmodule model cssmoduleName ]
 
 You can also use it like so:
 
     view model =
       let
-        cssmodule = (CSSModules.cssmodule model)
+        cssmodule = (Css.Modules.cssmodule model)
       in
         div [ cssmodule "Main.component" ]
 -}

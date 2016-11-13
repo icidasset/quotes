@@ -12,9 +12,8 @@ import Material.Spinner as Loading
 import Material.Textfield as Textfield
 
 import Bits.Quote
-import CSSModules exposing (cssmodule)
-import Messages exposing (Msg(Mdl, SetCollectionUrl))
-import Model exposing (Model)
+import Css.Modules exposing (cssmodule)
+import Model.Types exposing (..)
 import Routing exposing (Page(..))
 
 
@@ -70,7 +69,7 @@ info model txt sub =
 settings : Model -> Html Msg
 settings model =
   Card.view
-    [ cs (CSSModules.class model "Settings.bit")
+    [ cs (Css.Modules.class model "Settings.bit")
     , Elevation.e2
     ]
     [ Card.title

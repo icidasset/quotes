@@ -4,12 +4,10 @@ import Html exposing (Html, section, text)
 import Html.Attributes exposing (..)
 import TouchEvents as TE
 
-import CSSModules exposing (cssmodule)
-import Messages exposing (Msg(..))
-import Model exposing (Model)
-
 import Bits.Pages
 import Bits.Footer
+import Css.Modules exposing (cssmodule)
+import Model.Types exposing (Model, Msg(..))
 
 
 view : Model -> Html Msg

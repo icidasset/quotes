@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "",
-    "repository": "https://github.com/user/project.git",
+    "repository": "https://github.com/icidasset/quotes.git",
     "license": "BSD3",
     "source-directories": [
         "app"

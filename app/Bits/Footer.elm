@@ -7,11 +7,9 @@ import Material.Icon as Icon
 import Material.Options as Options
 import Material.Typography as Typo
 
-import CSSModules exposing (cssmodule)
-import Messages exposing (Msg(..))
-import Model exposing (Model)
+import Css.Modules exposing (cssmodule)
+import Model.Types exposing (Model, Msg(..))
 import Routing exposing (Page(..))
-import Types exposing (Mdl)
 
 
 render : Model -> Html Msg

@@ -3,16 +3,15 @@ module Bits.Quote exposing (render)
 import ElmEscapeHtml
 import Html exposing (Html, div, text)
 
-import CSSModules
-import Messages exposing (Msg)
-import Model exposing (Model)
-import Types exposing (Quote)
+import Css.Modules
+import Model.Types exposing (Model, Msg)
+import Quotes.Types exposing (Quote)
 
 
 render : Quote -> Model -> Html Msg
 render quote model =
   let
-    cssmod = \x -> CSSModules.cssmodule model ("Quote." ++ x)
+    cssmod = \x -> Css.Modules.cssmodule model ("Quote." ++ x)
 
   in
     div

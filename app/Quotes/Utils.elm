@@ -7,8 +7,8 @@ import Random exposing (Generator)
 import Random.Array
 import Result
 
-import Model exposing (Model)
-import Types exposing (Quote, QuoteTuple)
+import Quotes.Types exposing (Quote, QuoteTuple)
+import Model.Types exposing (Model)
 
 
 {-| Convert a QuoteTuple to a Quote

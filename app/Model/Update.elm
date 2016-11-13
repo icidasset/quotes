@@ -1,4 +1,4 @@
-module Update exposing (..)
+module Model.Update exposing (..)
 
 import Debounce
 import Dict
@@ -9,26 +9,18 @@ import Task
 import Time exposing (millisecond)
 import TouchEvents as TE exposing (Direction(..))
 
-import Commands exposing (..)
-import CSSModules
-import Messages exposing (Msg(..))
-import Model exposing (Model, UserDataModel, fromUserData, initialUserData)
+import Model.Types exposing (..)
 import Quotes.Utils
-import Routing exposing (Page(..), LocationResult, toPage)
-
-
-type alias ProgramFlag =
-  { cssmodules : Maybe CSSModules.Flag
-  , userData : Maybe UserDataModel
-  }
+import Routing exposing (Page(..))
+import Signals.Commands exposing (..)
 
 
 
 -- Model
 
 
-updateModel : Msg -> Model -> (Model, Cmd Msg)
-updateModel msg model =
+withMessage : Msg -> Model -> (Model, Cmd Msg)
+withMessage msg model =
   case msg of
     -- Pages
     GoToIndex ->
@@ -162,31 +154,6 @@ makeCmd =
 -- Navigation
 
 
-urlUpdated : LocationResult -> Model -> (Model, Cmd Msg)
-urlUpdated result model =
-  { model | page = (toPage result) } ! []
-
-
-
--- Subscriptions
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-  Sub.none
-
-
-
--- Init
-
-
-setInitialModel : ProgramFlag -> LocationResult -> (Model, Cmd Msg)
-setInitialModel flag result =
-  let
-    model = toPage result
-    |> Model.initial
-    |> CSSModules.init flag.cssmodules
-    |> fromUserData flag.userData
-  in
-    { model | fetchInProgress = True } !
-    [ fetchQuotes model ]
+withPage : Page -> Model -> (Model, Cmd Msg)
+withPage page model =
+  { model | page = page } ! []

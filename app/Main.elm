@@ -1,15 +1,16 @@
+import Model.Init
+import Model.Update
 import Navigation
-
 import Routing exposing (urlParser)
-import Update exposing (setInitialModel, subscriptions, updateModel, urlUpdated)
+import Signals.Subscriptions
 import View exposing (view)
 
 
 main =
   Navigation.programWithFlags urlParser
-    { init = setInitialModel
+    { init = Model.Init.withProgramFlags
     , view = view
-    , update = updateModel
-    , urlUpdate = urlUpdated
-    , subscriptions = subscriptions
+    , update = Model.Update.withMessage
+    , urlUpdate = Model.Update.withPage
+    , subscriptions = Signals.Subscriptions.batch
     }
