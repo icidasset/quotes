@@ -3,7 +3,7 @@
 
 
 const sdk = fissionSdk
-const uuid = "icidasset/Quotes"
+const uuid = "icidasset.quotes"
 
 
 // 🚀
