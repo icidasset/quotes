@@ -1,4 +1,6 @@
+/build
+/elm-stuff
+/node_modules
+/src/Tailwind.elm
+
 .DS_Store
-build
-elm-stuff
-node_modules

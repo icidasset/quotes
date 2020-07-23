@@ -12,7 +12,7 @@ const uuid = "icidasset/Quotes"
 let app, fs
 
 
-sdk.isAuthenticated().then(({ authenticated, newUser, session, throughLobby }) => {
+sdk.isAuthenticated().then(async ({ authenticated, newUser, session, throughLobby }) => {
 
   // The file system
   fs = session && session.fs
@@ -23,7 +23,10 @@ sdk.isAuthenticated().then(({ authenticated, newUser, session, throughLobby }) =
       authenticated,
       newUser,
       throughLobby,
-      username: session && session.username
+
+      currentTime: Date.now(),
+      quotes: authenticated ? await loadQuotes() : null,
+      username: session ? session.username : null
     }
   })
 
@@ -33,11 +36,6 @@ sdk.isAuthenticated().then(({ authenticated, newUser, session, throughLobby }) =
   //   app.ports.addedQuoteSuccessfully.send()
   // })
 
-  // app.ports.loadQuotes.subscribe(async () => {
-  //   const quotes = await loadQuotes(quote)
-  //   app.ports.loadedQuotesSuccessfully.send(quotes)
-  // })
-
 })
 
 
@@ -45,21 +43,30 @@ sdk.isAuthenticated().then(({ authenticated, newUser, session, throughLobby }) =
 // CRUD
 
 
+/**
+ * Add a `Quote` to the file system.
+ */
 async function addQuote(quote) {
   return await fs.write(
-    fs.appPath.private(uuid, quote.id),
+    fs.appPath.private(uuid, [ "Collection", quote.id ]),
     JSON.stringify(quote)
   )
 }
 
 
-async function loadQuotes() {
-  const files = await fs.ls(
-    fs.appPath.private(uuid)
-  ).catch(
-    _ => []
-  )
+/**
+ * Get the JSON-encoded `Quote`s from the file system,
+ * and then decode them.
+ */
+function loadQuotes() {
+  const quotesPath = fs.appPath.private(uuid, [ "Collection" ])
 
-  // TODO
-  return []
+  return fs
+    .ls(quotesPath)
+    .catch(_ => {})
+    .then(a => a || {})
+    .then(Object.entries)
+    .then(links => Promise.all(
+      links.map(([name, _]) => fs.cat(`${quotesPath}/${name}`).then(JSON.parse))
+    ))
 }

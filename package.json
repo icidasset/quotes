@@ -1,5 +1,7 @@
 {
   "private": true,
-  "dependencies": {},
-  "devDependencies": {}
+  "type": "module",
+  "devDependencies": {
+    "elm-tailwind-css": "^0.2.0"
+  }
 }
