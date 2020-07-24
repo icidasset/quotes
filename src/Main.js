@@ -59,14 +59,26 @@ async function addQuote(quote) {
  * and then decode them.
  */
 function loadQuotes() {
-  const quotesPath = fs.appPath.private(uuid, [ "Collection" ])
+  const quotesPath =
+    fs.appPath.private(uuid, [ "Collection" ])
 
   return fs
+    // List collection.
+    // If the path doesn't exist, return an empty object.
     .ls(quotesPath)
     .catch(_ => {})
     .then(a => a || {})
+
+    // Transform the object into a list,
+    // and retrieve each quote.
     .then(Object.entries)
     .then(links => Promise.all(
       links.map(([name, _]) => fs.cat(`${quotesPath}/${name}`).then(JSON.parse))
     ))
+
+    // Log to console
+    .then(list => {
+      console.log(list)
+      return list
+    })
 }
