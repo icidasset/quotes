@@ -1,3 +1,6 @@
+import defaultTheme from "tailwindcss/defaultTheme.js"
+
+
 export default {
 
   /////////////////////////////////////////
@@ -5,6 +8,16 @@ export default {
   /////////////////////////////////////////
 
   theme: {
+
+    // Fonts
+    // -----
+
+    fontFamily: {
+      ...defaultTheme.fontFamily,
+
+      body: [ "Roboto", ...defaultTheme.fontFamily.sans ],
+      display: [ "Playfair Display", ...defaultTheme.fontFamily.serif ]
+    },
 
     // Inset
     // -----

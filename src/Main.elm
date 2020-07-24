@@ -2,8 +2,10 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (Html)
+import Html.Events as E
+import Ports
 import Quote exposing (..)
-import Return
+import Return exposing (return)
 import Tailwind as T
 import Time
 
@@ -68,13 +70,14 @@ init flags =
 type Msg
     = AddedQuote { author : String, quote : String }
     | GotCurrentTime Time.Posix
+    | SignIn
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( model, msg ) of
         -----------------------------------------
-        -- Added Quote
+        -- Added quote
         -----------------------------------------
         ( Authenticated a, AddedQuote properties ) ->
             let
@@ -97,12 +100,18 @@ update msg model =
                 |> Return.singleton
 
         -----------------------------------------
-        -- Got Current Time
+        -- Got current time
         -----------------------------------------
         ( Authenticated a, GotCurrentTime time ) ->
             { a | currentTime = time }
                 |> Authenticated
                 |> Return.singleton
+
+        -----------------------------------------
+        -- Sign in
+        -----------------------------------------
+        ( _, SignIn ) ->
+            return model (Ports.signIn ())
 
         -----------------------------------------
         -- -
@@ -135,12 +144,67 @@ body : Model -> List (Html Msg)
 body model =
     case model of
         Authenticated { quotes } ->
-            [ Html.text ""
-            ]
+            case quotes of
+                quote :: _ ->
+                    quoteView quote
+
+                [] ->
+                    [ Html.text "Haven't got any quotes yet." ]
 
         NotAuthenticated ->
-            [ Html.button
-                [ T.rounded
+            notAuthenticated
+
+
+
+-- QUOTES
+
+
+quoteView : Quote -> List (Html Msg)
+quoteView quote =
+    [ Html.div
+        [ T.flex
+        , T.font_display
+        , T.h_screen
+        , T.items_center
+        , T.justify_center
+        , T.text_gray_800
+        ]
+        [ -----------------------------------------
+          -- Quote
+          -----------------------------------------
+          Html.div
+            [ T.max_w_xl ]
+            [ Html.div
+                [ T.leading_snug
+                , T.text_4xl
+                , T.text_justify
                 ]
-                [ Html.text "Login with Fission" ]
+                [ Html.text quote.quote ]
+
+            -- Author
+            ---------
+            , Html.div
+                [ T.font_bold
+                , T.mt_5
+                , T.text_sm
+                ]
+                [ Html.text ("— " ++ quote.author) ]
             ]
+        ]
+    ]
+
+
+
+-- NOT AUTHENTICATED
+
+
+notAuthenticated : List (Html Msg)
+notAuthenticated =
+    [ Html.button
+        [ E.onClick SignIn
+
+        --
+        , T.rounded
+        ]
+        [ Html.text "Sign in with Fission" ]
+    ]

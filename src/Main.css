@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 
+body {
+  @apply bg-gray-100;
+}
+
+
 /**
  * Loading animation.
  */
