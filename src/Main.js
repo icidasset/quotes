@@ -31,6 +31,8 @@ sdk.isAuthenticated().then(async ({ authenticated, newUser, session, throughLobb
   })
 
   // Communicate with Elm app
+  app.ports.signIn.subscribe(sdk.redirectToLobby)
+
   // app.ports.addQuote.subscribe(async quote => {
   //   await addQuote(quote)
   //   app.ports.addedQuoteSuccessfully.send()
