@@ -196,8 +196,9 @@ quoteView quote =
         -- Author
         -----------------------------------------
         , Html.div
-            [ T.font_bold
+            [ T.font_semibold
             , T.mt_5
+            , T.text_base04
             , T.text_sm
             ]
             [ Html.span [ T.inline_block, T.mr_2 ] [ Html.text "—" ]
