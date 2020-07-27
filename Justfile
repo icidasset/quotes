@@ -45,7 +45,7 @@ src 				:= "src"
 
 
 @elm:
-	elm make src/Main.elm --output={{dist}}/application.js --debug
+	elm make src/Main.elm --output={{dist}}/application.js # --debug
 
 
 @html:

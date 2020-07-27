@@ -31,12 +31,9 @@ sdk.isAuthenticated().then(async ({ authenticated, newUser, session, throughLobb
   })
 
   // Communicate with Elm app
+  app.ports.addQuote.subscribe(addQuote)
+  app.ports.removeQuote.subscribe(removeQuote)
   app.ports.signIn.subscribe(sdk.redirectToLobby)
-
-  // app.ports.addQuote.subscribe(async quote => {
-  //   await addQuote(quote)
-  //   app.ports.addedQuoteSuccessfully.send()
-  // })
 
 })
 
@@ -52,6 +49,16 @@ async function addQuote(quote) {
   return await fs.write(
     fs.appPath.private(uuid, [ "Collection", quote.id ]),
     JSON.stringify(quote)
+  )
+}
+
+
+/**
+ * Remove a `Quote` from the file system.
+ */
+async function removeQuote(quote) {
+  return await fs.rm(
+    fs.appPath.private(uuid, [ "Collection", quote.id ])
   )
 }
 
