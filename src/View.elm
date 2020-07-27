@@ -47,11 +47,12 @@ body model =
         -- Not authenticated
         -----------------------------------------
         [ Html.button
-            [ E.onClick SignIn
-
-            --
-            , T.rounded
-            ]
+            (List.append
+                buttonAttributes
+                [ E.onClick SignIn
+                , T.bg_purple
+                ]
+            )
             [ Html.text "Sign in with Fission" ]
         ]
 
@@ -118,7 +119,9 @@ add model context =
             [ Html.button
                 (List.append
                     buttonAttributes
-                    [ A.type_ "submit" ]
+                    [ A.type_ "submit"
+                    , T.bg_teal
+                    ]
                 )
                 [ Html.text "Add Quote" ]
             ]
@@ -216,7 +219,6 @@ buttonAttributes =
     [ T.antialiased
     , T.appearance_none
     , T.inline_block
-    , T.bg_teal
     , T.font_medium
     , T.px_5
     , T.py_3
