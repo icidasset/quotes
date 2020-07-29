@@ -12,28 +12,30 @@ const uuid = "icidasset.quotes"
 let app, fs
 
 
-sdk.isAuthenticated().then(async ({ authenticated, newUser, session, throughLobby }) => {
+sdk.initialise(uuid).then(async ({ scenario, state }) => {
+  const { authenticated, newUser, throughLobby, username } = state
 
-  // The file system
-  fs = session && session.fs
+  // The file system,
+  // we'll use this later (see CRUD functions below)
+  fs = state.fs
 
   // Initialise Elm app
-  app = Elm.Main.init({
+  elm = Elm.Main.init({
     flags: {
       authenticated,
-      newUser,
-      throughLobby,
 
-      currentTime: Date.now(),
-      quotes: authenticated ? await loadQuotes() : null,
-      username: session ? session.username : null
+      currentTime:      Date.now(),
+      newUser:          newUser || null,
+      quotes:           authenticated ? await loadQuotes() : null,
+      throughLobby:     throughLobby || false,
+      username:         username || null
     }
   })
 
   // Communicate with Elm app
-  app.ports.addQuote.subscribe(addQuote)
-  app.ports.removeQuote.subscribe(removeQuote)
-  app.ports.signIn.subscribe(sdk.redirectToLobby)
+  elm.ports.addQuote.subscribe(addQuote)
+  elm.ports.removeQuote.subscribe(removeQuote)
+  elm.ports.signIn.subscribe(sdk.redirectToLobby)
 
 })
 
