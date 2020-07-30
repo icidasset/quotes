@@ -12,7 +12,7 @@ const uuid = "icidasset.quotes"
 let app, fs
 
 
-sdk.initialise(uuid).then(async ({ scenario, state }) => {
+sdk.initialise().then(async ({ scenario, state }) => {
   const { authenticated, newUser, throughLobby, username } = state
 
   // The file system,
