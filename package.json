@@ -4,5 +4,8 @@
   "devDependencies": {
     "elm-tailwind-css": "^0.2.0",
     "tailwindcss": "^1.4.6"
+  },
+  "dependencies": {
+    "fission-sdk": "^0.14.1"
   }
 }

@@ -17,6 +17,10 @@ src 				:= "src"
 	devd ./build -p 8002
 
 
+@install-deps:
+	pnpm install
+
+
 
 # Parts
 # -----
@@ -54,7 +58,7 @@ src 				:= "src"
 
 @js:
 	mkdir -p {{dist}}/web_modules
-	cp ../../Work/ts-sdk/dist/index.umd.js {{dist}}/web_modules/fission-sdk.js
+	cp ./node_modules/fission-sdk/index.umd.js {{dist}}/web_modules/fission-sdk.js
 	cp {{src}}/Main.js {{dist}}/index.js
 
 
