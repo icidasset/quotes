@@ -138,6 +138,10 @@ label l =
         , T.text_xxs
         , T.tracking_pushing_it
         , T.uppercase
+
+        -- Dark mode
+        ------------
+        , T.dark__text_base04
         ]
         [ Html.text l ]
 
@@ -149,7 +153,6 @@ textfieldAttributes placeholder =
     --
     , T.appearance_none
     , T.bg_white
-    , T.border_0
     , T.block
     , T.font_display
     , T.italic
@@ -162,6 +165,13 @@ textfieldAttributes placeholder =
     , T.text_base00
     , T.text_base
     , T.w_full
+
+    -- Dark mode
+    ------------
+    , T.dark__bg_white_05
+    , T.dark__placeholder_white
+    , T.dark__placeholder_opacity_20
+    , T.dark__text_base06
     ]
 
 
@@ -203,6 +213,10 @@ quoteView quote =
             , T.mt_5
             , T.text_base04
             , T.text_sm
+
+            -- Dark mode
+            ------------
+            , T.dark__text_base03
             ]
             [ Html.span [ T.inline_block, T.mr_2 ] [ Html.text "—" ]
             , Html.span [ T.inline_block ] [ Html.text quote.author ]
@@ -248,6 +262,10 @@ containerStyles =
     , T.items_center
     , T.justify_center
     , T.text_base00
+
+    -- Dark mode
+    ------------
+    , T.dark__text_base06
     ]
 
 
@@ -261,6 +279,10 @@ navigation model =
         , T.neg_translate_x_1over2
         , T.text_base04
         , T.transform
+
+        -- Dark mode
+        ------------
+        , T.dark__text_base03
         ]
         (case model.screen of
             Add _ ->

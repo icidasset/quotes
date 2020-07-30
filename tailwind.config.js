@@ -33,8 +33,10 @@ export default {
 
       black: "#000",
       white: "#fff",
+      white_05: "rgba(255, 255, 255, 0.05)",
 
-      inherit: "inherit"
+      inherit: "inherit",
+      transparent: "transparent"
     },
 
     // Fonts
@@ -105,7 +107,9 @@ export default {
   // VARIANTS /////////////////////////////
   /////////////////////////////////////////
 
-  variants: {},
+  variants: {
+    borderWidth: [ "first", "focus", "last" ]
+  },
 
 
   /////////////////////////////////////////

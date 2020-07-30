@@ -8,6 +8,22 @@ body {
 }
 
 
+@screen dark {
+  body { @apply bg-base00 }
+}
+
+
+
+/**
+ * Input
+ */
+
+/* TODO: input:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(123,189,164, 1);
+  outline: none;
+} */
+
+
 /**
  * Loading animation.
  */
