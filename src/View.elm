@@ -50,7 +50,7 @@ body model =
             (List.append
                 buttonAttributes
                 [ E.onClick SignIn
-                , T.bg_purple
+                , T.bg_red
                 ]
             )
             [ Html.text "Sign in with Fission" ]
@@ -120,7 +120,7 @@ add model context =
                 (List.append
                     buttonAttributes
                     [ A.type_ "submit"
-                    , T.bg_teal
+                    , T.bg_orange
                     ]
                 )
                 [ Html.text "Add Quote" ]
@@ -154,11 +154,14 @@ textfieldAttributes placeholder =
     , T.appearance_none
     , T.bg_white
     , T.block
+    , T.border_2
+    , T.border_transparent
     , T.font_display
     , T.italic
     , T.leading_relaxed
     , T.mb_8
-    , T.p_4
+    , T.outline_none
+    , T.p_3
     , T.placeholder_base04
     , T.placeholder_opacity_100
     , T.rounded
@@ -166,11 +169,14 @@ textfieldAttributes placeholder =
     , T.text_base
     , T.w_full
 
+    --
+    , T.focus__border_orange
+    , T.focus__border_opacity_50
+
     -- Dark mode
     ------------
-    , T.dark__bg_white_05
-    , T.dark__placeholder_white
-    , T.dark__placeholder_opacity_20
+    , T.dark__bg_base01
+    , T.dark__placeholder_base03
     , T.dark__text_base06
     ]
 
@@ -269,6 +275,18 @@ containerStyles =
     ]
 
 
+iconButton : List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
+iconButton attributes =
+    Html.button
+        (List.append
+            [ T.appearance_none
+            , T.focus__text_orange
+            , T.rounded
+            ]
+            attributes
+        )
+
+
 navigation : Model -> Html Msg
 navigation model =
     Html.div
@@ -289,7 +307,7 @@ navigation model =
                 -----------------------------------------
                 -- Show
                 -----------------------------------------
-                [ Html.button
+                [ iconButton
                     [ A.title "Show a quote"
                     , E.onClick (ShowScreen Screen.Index)
                     ]
@@ -301,7 +319,7 @@ navigation model =
                 -----------------------------------------
                 -- Add
                 -----------------------------------------
-                [ Html.button
+                [ iconButton
                     [ A.title "Add a quote"
                     , E.onClick (ShowScreen Screen.add)
                     ]
@@ -317,7 +335,7 @@ navigation model =
                             askForConfirmation =
                                 model.confirmation == Just Confirm.QuoteRemoval
                         in
-                        Html.button
+                        iconButton
                             [ A.title "Remove this quote"
                             , E.onClick (RemoveQuote quote)
                             , T.ml_5
@@ -349,5 +367,10 @@ note theNote =
         , T.italic
         , T.opacity_70
         , T.text_lg
+
+        -- Dark mode
+        ------------
+        , T.dark__opacity_100
+        , T.dark__text_base03
         ]
         [ Html.text theNote ]
