@@ -1,11 +1,13 @@
-__Quotes__
+> __“Quotes”__
+> — Steven Vandevelde
+
+
+### Development
+
+This project uses Nix to manage the project's environment. If you'd like to build this project without Nix, check out the dependencies in the `shell.nix` file (most are available through Homebrew as well).
 
 ```shell
-brew install devd
-brew install elm
-brew install just
-
-# Install other dependencies
+# Install javascript dependencies
 just install-deps
 
 # Build, serve, watch
