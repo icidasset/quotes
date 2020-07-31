@@ -33,7 +33,9 @@ export default {
 
       black: "#000",
       white: "#fff",
-      white_05: "rgba(255, 255, 255, 0.05)",
+
+      "dark-side": "#26201a",
+      "white-05": "rgba(255, 255, 255, 0.05)",
 
       inherit: "inherit",
       transparent: "transparent"

@@ -120,7 +120,11 @@ add model context =
                 (List.append
                     buttonAttributes
                     [ A.type_ "submit"
-                    , T.bg_orange
+                    , T.bg_teal
+
+                    -- Dark mode
+                    ------------
+                    , T.dark__bg_orange
                     ]
                 )
                 [ Html.text "Add Quote" ]
@@ -170,14 +174,17 @@ textfieldAttributes placeholder =
     , T.w_full
 
     --
-    , T.focus__border_orange
+    , T.focus__border_teal
     , T.focus__border_opacity_50
 
     -- Dark mode
     ------------
-    , T.dark__bg_base01
-    , T.dark__placeholder_base03
+    , T.dark__bg_dark_side
+    , T.dark__placeholder_base02
     , T.dark__text_base06
+
+    --
+    , T.dark__focus__border_orange
     ]
 
 
@@ -280,8 +287,12 @@ iconButton attributes =
     Html.button
         (List.append
             [ T.appearance_none
-            , T.focus__text_orange
+            , T.focus__text_teal
             , T.rounded
+
+            -- Dark mode
+            ------------
+            , T.dark__focus__text_orange
             ]
             attributes
         )
