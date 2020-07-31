@@ -110,7 +110,8 @@ export default {
   /////////////////////////////////////////
 
   variants: {
-    borderWidth: [ "first", "focus", "last" ]
+    borderWidth: [ "first", "focus", "last" ],
+    margin: [ "first", "last", "responsive" ]
   },
 
 
