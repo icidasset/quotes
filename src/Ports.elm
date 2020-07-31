@@ -13,4 +13,7 @@ port addQuote : Quote -> Cmd msg
 port removeQuote : Quote -> Cmd msg
 
 
+port saveSelectionHistory : List String -> Cmd msg
+
+
 port signIn : () -> Cmd msg

@@ -81,7 +81,8 @@ add model context =
             ("Marcus Aurelius"
                 |> textfieldAttributes
                 |> List.append
-                    [ A.required True
+                    [ A.name "author"
+                    , A.required True
                     , E.onInput GotAddInputForAuthor
                     ]
             )
@@ -102,7 +103,8 @@ add model context =
                 |> String.join "\n"
                 |> textfieldAttributes
                 |> List.append
-                    [ A.required True
+                    [ A.name "quote"
+                    , A.required True
                     , E.onInput GotAddInputForQuote
 
                     --
@@ -197,23 +199,23 @@ index : Model -> Html Msg
 index model =
     case model.selectedQuote of
         ( Just quote, _ ) ->
-            quoteView quote
+            quoteView quote model
 
         ( Nothing, _ ) ->
             note "Nothing here yet, want to add a quote?"
 
 
-quoteView : Quote -> Html Msg
-quoteView quote =
+quoteView : Quote -> Model -> Html Msg
+quoteView quote model =
     Html.div
-        [ T.font_display
-        , T.max_w_xl
+        [ T.max_w_xl
         ]
         [ -----------------------------------------
           -- Quote
           -----------------------------------------
           Html.div
-            [ T.leading_snug
+            [ T.font_display
+            , T.leading_snug
             , T.text_4xl
             , T.text_justify
             ]
@@ -223,7 +225,8 @@ quoteView quote =
         -- Author
         -----------------------------------------
         , Html.div
-            [ T.font_semibold
+            [ T.font_display
+            , T.font_semibold
             , T.mt_5
             , T.text_base04
             , T.text_sm
@@ -234,6 +237,21 @@ quoteView quote =
             ]
             [ Html.span [ T.inline_block, T.mr_2 ] [ Html.text "—" ]
             , Html.span [ T.inline_block ] [ Html.text quote.author ]
+            ]
+
+        -- TODO
+        , Html.div
+            [ T.absolute
+            , T.bottom_0
+            , T.font_medium
+            , T.hidden
+            , T.left_0
+            , T.mb_12
+            , T.ml_8
+            ]
+            [ Html.text (String.fromInt <| List.length model.selectionHistory)
+            , Html.text " of "
+            , Html.text (String.fromInt <| List.length model.quotes)
             ]
         ]
 

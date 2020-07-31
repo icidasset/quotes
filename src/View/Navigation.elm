@@ -92,6 +92,16 @@ view model =
                         Html.text ""
 
                 -----------------------------------------
+                -- Next
+                -----------------------------------------
+                , iconButton
+                    [ A.title "Add a quote"
+                    , E.onClick SelectNextQuote
+                    ]
+                    [ Icons.arrow_forward 24 Inherit
+                    ]
+
+                -----------------------------------------
                 -- 🦉
                 -----------------------------------------
                 -- TODO:
@@ -109,16 +119,11 @@ iconButton attributes =
     Html.button
         (List.append
             [ T.appearance_none
-            , T.focus__text_teal
-            , T.ml_5
+            , T.ml_6
             , T.rounded
 
             --
             , T.first__ml_0
-
-            -- Dark mode
-            ------------
-            , T.dark__focus__text_orange
             ]
             attributes
         )

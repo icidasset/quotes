@@ -24,7 +24,14 @@ init flags =
         selectedQuote =
             pickRandomQuote
                 (Random.initialSeed flags.currentTime)
+                flags.selectionHistory
                 quotes
+
+        ( selectionHistory, selectionHistoryCmd ) =
+            maybeAddToSelectionHistory
+                flags.selectionHistory
+                quotes
+                (Tuple.first selectedQuote)
     in
     ( -----------------------------------------
       -- Model
@@ -34,12 +41,13 @@ init flags =
       , currentTime = Time.millisToPosix flags.currentTime
       , quotes = quotes
       , selectedQuote = selectedQuote
+      , selectionHistory = selectionHistory
       , screen = Index
       }
       -----------------------------------------
       -- Command
       -----------------------------------------
-    , Cmd.none
+    , selectionHistoryCmd
     )
 
 
@@ -73,6 +81,9 @@ update msg =
 
         RemoveConfirmation ->
             removeConfirmation
+
+        SelectNextQuote ->
+            selectNextQuote
 
         ShowScreen a ->
             showScreen a
@@ -177,6 +188,29 @@ removeConfirmation model =
     Return.singleton { model | confirmation = Nothing }
 
 
+selectNextQuote : Manager
+selectNextQuote model =
+    let
+        selectedQuote =
+            pickRandomQuote
+                (Tuple.second model.selectedQuote)
+                model.selectionHistory
+                model.quotes
+
+        ( selectionHistory, selectionHistoryCmd ) =
+            maybeAddToSelectionHistory
+                model.selectionHistory
+                model.quotes
+                (Tuple.first selectedQuote)
+    in
+    return
+        { model
+            | selectedQuote = selectedQuote
+            , selectionHistory = selectionHistory
+        }
+        selectionHistoryCmd
+
+
 showScreen : Screen -> Manager
 showScreen screen model =
     Return.singleton { model | screen = screen }
@@ -191,8 +225,36 @@ signIn model =
 -- ㊙️
 
 
-pickRandomQuote : Random.Seed -> List Quote -> ( Maybe Quote, Random.Seed )
-pickRandomQuote seed quotes =
+maybeAddToSelectionHistory : List String -> List Quote -> Maybe Quote -> ( List String, Cmd Msg )
+maybeAddToSelectionHistory selectionHistory quotes maybeQuote =
+    case maybeQuote of
+        Just quote ->
+            let
+                new =
+                    if List.length selectionHistory + 1 > List.length quotes then
+                        [ quote.id ]
+
+                    else
+                        quote.id :: selectionHistory
+            in
+            ( new, Ports.saveSelectionHistory new )
+
+        Nothing ->
+            ( selectionHistory, Cmd.none )
+
+
+pickRandomQuote : Random.Seed -> List String -> List Quote -> ( Maybe Quote, Random.Seed )
+pickRandomQuote seed selectionHistory quotes =
+    let
+        unselectedQuotes =
+            if List.length selectionHistory + 1 > List.length quotes then
+                quotes
+
+            else
+                List.filter
+                    (\q -> List.notMember q.id selectionHistory)
+                    quotes
+    in
     seed
-        |> Random.step (Random.int 0 <| List.length quotes - 1)
-        |> Tuple.mapFirst (\idx -> List.getAt idx quotes)
+        |> Random.step (Random.int 0 <| List.length unselectedQuotes - 1)
+        |> Tuple.mapFirst (\idx -> List.getAt idx unselectedQuotes)

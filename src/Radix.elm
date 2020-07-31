@@ -16,6 +16,7 @@ type alias Flags =
     , currentTime : Int
     , newUser : Maybe Bool
     , quotes : Maybe (List Quote)
+    , selectionHistory : List String
     , throughLobby : Bool
     , username : Maybe String
     }
@@ -31,6 +32,7 @@ type alias Model =
     , currentTime : Time.Posix
     , quotes : List Quote
     , selectedQuote : ( Maybe Quote, Random.Seed )
+    , selectionHistory : List String
     , screen : Screen
     }
 
@@ -53,6 +55,7 @@ type
       -----------------------------------------
     | GotCurrentTime Time.Posix
     | RemoveConfirmation
+    | SelectNextQuote
     | ShowScreen Screen
     | SignIn
 

@@ -2,8 +2,8 @@
 // | (• ◡•)| (❍ᴥ❍ʋ)
 
 
+const UUID = "icidasset.quotes"
 const sdk = fissionSdk
-const uuid = "icidasset.quotes"
 
 
 // 🚀
@@ -24,17 +24,19 @@ sdk.initialise().then(async ({ scenario, state }) => {
     flags: {
       authenticated,
 
-      currentTime:      Date.now(),
-      newUser:          newUser || null,
-      quotes:           authenticated ? await loadQuotes() : null,
-      throughLobby:     throughLobby || false,
-      username:         username || null
+      currentTime:        Date.now(),
+      newUser:            newUser || null,
+      quotes:             authenticated ? await loadQuotes() : null,
+      selectionHistory:   authenticated ? await retrieveSelectionHistory() : [],
+      throughLobby:       throughLobby || false,
+      username:           username || null
     }
   })
 
   // Communicate with Elm app
   elm.ports.addQuote.subscribe(addQuote)
   elm.ports.removeQuote.subscribe(removeQuote)
+  elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
   elm.ports.signIn.subscribe(sdk.redirectToLobby)
 
 })
@@ -49,7 +51,7 @@ sdk.initialise().then(async ({ scenario, state }) => {
  */
 async function addQuote(quote) {
   return await fs.write(
-    fs.appPath.private(uuid, [ "Collection", quote.id ]),
+    fs.appPath.private(UUID, [ "Collection", quote.id ]),
     JSON.stringify(quote)
   )
 }
@@ -60,7 +62,7 @@ async function addQuote(quote) {
  */
 async function removeQuote(quote) {
   return await fs.rm(
-    fs.appPath.private(uuid, [ "Collection", quote.id ])
+    fs.appPath.private(UUID, [ "Collection", quote.id ])
   )
 }
 
@@ -71,7 +73,7 @@ async function removeQuote(quote) {
  */
 function loadQuotes() {
   const quotesPath =
-    fs.appPath.private(uuid, [ "Collection" ])
+    fs.appPath.private(UUID, [ "Collection" ])
 
   return fs
     // List collection.
@@ -92,4 +94,27 @@ function loadQuotes() {
       console.log(list)
       return list
     })
+}
+
+
+
+// SELECTION HISTORY
+
+
+function historyPath() {
+  return fs.appPath.private(UUID, [ "History", "selection.json" ])
+}
+
+
+async function retrieveSelectionHistory() {
+  const json = await fs.read(historyPath()).catch(_ => null)
+  return json ? JSON.parse(json) : []
+}
+
+
+function saveSelectionHistory(listOfQuoteIds) {
+  return fs.write(
+    historyPath(),
+    JSON.stringify(listOfQuoteIds)
+  )
 }
