@@ -22,6 +22,8 @@ view model =
         [ T.bottom_0
         , T.left_1over2
         , T.fixed
+        , T.flex
+        , T.items_center
         , T.mb_12
         , T.neg_translate_x_1over2
         , T.text_base04
@@ -95,7 +97,7 @@ view model =
                 -- Next
                 -----------------------------------------
                 , iconButton
-                    [ A.title "Add a quote"
+                    [ A.title "Show another quote"
                     , E.onClick SelectNextQuote
                     ]
                     [ Icons.arrow_forward 24 Inherit

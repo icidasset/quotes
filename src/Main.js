@@ -107,14 +107,16 @@ function historyPath() {
 
 
 async function retrieveSelectionHistory() {
-  const json = await fs.read(historyPath()).catch(_ => null)
-  return json ? JSON.parse(json) : []
+  // const json = await fs.read(historyPath()).catch(_ => null)
+  // return json ? JSON.parse(json) : []
+  return []
 }
 
 
 function saveSelectionHistory(listOfQuoteIds) {
-  return fs.write(
-    historyPath(),
-    JSON.stringify(listOfQuoteIds)
-  )
+  console.log("Save", JSON.stringify(listOfQuoteIds))
+  // return fs.write(
+  //   historyPath(),
+  //   JSON.stringify(listOfQuoteIds)
+  // )
 }

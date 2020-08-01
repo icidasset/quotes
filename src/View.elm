@@ -239,15 +239,25 @@ quoteView quote model =
             , Html.span [ T.inline_block ] [ Html.text quote.author ]
             ]
 
-        -- TODO
+        -----------------------------------------
+        -- History Counter
+        -----------------------------------------
         , Html.div
-            [ T.absolute
+            [ A.title "Quotes seen from collection"
+            , E.onClick SelectNextQuote
+
+            --
+            , T.absolute
             , T.bottom_0
-            , T.font_medium
-            , T.hidden
+            , T.cursor_pointer
             , T.left_0
             , T.mb_12
-            , T.ml_8
+            , T.ml_10
+            , T.text_base04
+            , T.text_sm
+
+            --
+            , T.dark__text_base03
             ]
             [ Html.text (String.fromInt <| List.length model.selectionHistory)
             , Html.text " of "
