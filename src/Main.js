@@ -88,12 +88,6 @@ function loadQuotes() {
     .then(links => Promise.all(
       links.map(([name, _]) => fs.cat(`${quotesPath}/${name}`).then(JSON.parse))
     ))
-
-    // Log to console
-    .then(list => {
-      console.log(list)
-      return list
-    })
 }
 
 

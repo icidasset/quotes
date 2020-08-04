@@ -12,6 +12,7 @@ import Radix exposing (..)
 import Screen exposing (AddContext, Screen(..))
 import Tailwind as T
 import View.Navigation as Navigation
+import View.Svg as Svg
 
 
 
@@ -47,14 +48,53 @@ body model =
         -----------------------------------------
         -- Not authenticated
         -----------------------------------------
-        [ Html.button
-            (List.append
-                buttonAttributes
-                [ E.onClick SignIn
-                , T.bg_red
-                ]
+        [ Html.h1
+            [ T.font_display
+            , T.font_extrabold
+            , T.text_6xl
+            ]
+            [ Html.text "“Quotes”" ]
+
+        --
+        , Html.p
+            [ T.mt_6
+            , T.text_base03
+
+            -- Dark mode
+            ------------
+            , T.dark__text_base04
+            ]
+            ("""
+             A joyful way of keeping track of your favourite quotes.
+             """
+                |> String.trim
+                |> String.split "\n"
+                |> List.map String.trim
+                |> List.map (\a -> Html.span [] [ Html.text a, Html.br [] [] ])
             )
-            [ Html.text "Sign in with Fission" ]
+
+        --
+        , Html.div
+            [ T.mt_10 ]
+            [ Html.button
+                (List.append
+                    buttonAttributes
+                    [ E.onClick SignIn
+                    , T.inline_flex
+                    , T.bg_red
+                    , T.items_center
+                    ]
+                )
+                [ Html.span
+                    [ T.h_4
+                    , T.mr_2
+                    , T.opacity_60
+                    , T.w_4
+                    ]
+                    [ Svg.badge ]
+                , Html.text "Sign in with Fission"
+                ]
+            ]
         ]
 
 
@@ -302,6 +342,7 @@ container model =
 containerStyles : List (Html.Attribute Msg)
 containerStyles =
     [ T.flex
+    , T.flex_col
     , T.h_screen
     , T.items_center
     , T.justify_center
