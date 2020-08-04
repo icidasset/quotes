@@ -121,14 +121,27 @@ addQuote properties model =
             , author = properties.author
             , quote = properties.quote
             }
+
+        newCollection =
+            model.quotes ++ [ quote ]
+
+        ( selectionHistory, selectionHistoryCmd ) =
+            maybeAddToSelectionHistory
+                model.selectionHistory
+                newCollection
+                (Just quote)
     in
-    return
-        { model
-            | quotes = model.quotes ++ [ quote ]
-            , screen = Index
-            , selectedQuote = Tuple.mapFirst (\_ -> Just quote) model.selectedQuote
-        }
-        (Ports.addQuote quote)
+    [ Ports.addQuote quote
+    , selectionHistoryCmd
+    ]
+        |> Cmd.batch
+        |> return
+            { model
+                | quotes = newCollection
+                , screen = Index
+                , selectedQuote = Tuple.mapFirst (\_ -> Just quote) model.selectedQuote
+                , selectionHistory = selectionHistory
+            }
 
 
 gotAddInputForAuthor : String -> Manager
@@ -164,6 +177,7 @@ removeQuote quote model =
             { model
                 | quotes = quotes
                 , selectedQuote = selectedQuote
+                , selectionHistory = List.remove quote.id
             }
             (Ports.removeQuote quote)
 
