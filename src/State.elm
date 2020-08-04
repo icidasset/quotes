@@ -177,7 +177,7 @@ removeQuote quote model =
             { model
                 | quotes = quotes
                 , selectedQuote = selectedQuote
-                , selectionHistory = List.remove quote.id
+                , selectionHistory = List.remove quote.id model.selectionHistory
             }
             (Ports.removeQuote quote)
 
