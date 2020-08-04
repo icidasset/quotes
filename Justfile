@@ -35,7 +35,10 @@ src 				:= "src"
 	pnpx etc {{src}}/Main.css \
 		--config tailwind.config.js \
 	  --elm-path {{src}}/Tailwind.elm \
-	  --output {{dist_css}}
+	  --output {{dist_css}} \
+		\
+		--post-plugin-before postcss-import \
+		--post-plugin-after postcss-custom-properties
 
 
 @css-small:
@@ -45,7 +48,10 @@ src 				:= "src"
 	  --output {{dist_css}} \
 		\
 	  --purge-content {{dist}}/**/*.html \
-	  --purge-content {{dist}}/application.js
+	  --purge-content {{dist}}/application.js \
+		\
+		--post-plugin-before postcss-import \
+		--post-plugin-after postcss-custom-properties
 
 
 @elm:

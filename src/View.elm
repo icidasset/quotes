@@ -251,8 +251,10 @@ quoteView quote model =
             , T.bottom_0
             , T.cursor_pointer
             , T.left_0
+            , T.leading_relaxed
             , T.mb_12
             , T.ml_10
+            , T.py_px
             , T.text_base04
             , T.text_sm
 
