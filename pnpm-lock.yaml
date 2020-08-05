@@ -1,5 +1,5 @@
 dependencies:
-  fission-sdk: 0.14.1
+  fission-sdk: 0.14.2
 devDependencies:
   elm-tailwind-css: 0.2.0
   postcss-custom-properties: 9.1.1
@@ -423,7 +423,7 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==
-  /fission-sdk/0.14.1:
+  /fission-sdk/0.14.2:
     dependencies:
       base58-universal: 1.0.0
       borc: 2.1.2
@@ -437,7 +437,7 @@ packages:
     engines:
       node: '>=10.0.0'
     resolution:
-      integrity: sha512-mT2XD+nn4+P5dR2ekGdCAPahe3wfkc7Z7RWxKnT1ArnkOcuBhpndaiuiJTy7iab3lFyqWU3k+SW/VJGcBElQhw==
+      integrity: sha512-/sqblZ3aPs3JZuxFmv+UHbcPKC4Y9ZM9AUeABFG5JBHIJrCwE2vdhF8nkaJeswWl8U0JUo415i/VNEPO1k9k2A==
   /fs-extra/8.1.0:
     dependencies:
       graceful-fs: 4.2.4
@@ -1294,7 +1294,7 @@ packages:
       integrity: sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==
 specifiers:
   elm-tailwind-css: ^0.2.0
-  fission-sdk: ^0.14.1
+  fission-sdk: ^0.14.2
   postcss-custom-properties: ^9.1.1
   postcss-import: ^12.0.1
   tailwindcss: ^1.6.0

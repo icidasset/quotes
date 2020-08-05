@@ -97,12 +97,17 @@ view model =
                 -----------------------------------------
                 -- Next
                 -----------------------------------------
-                , iconButton
-                    [ A.title "Show another quote"
-                    , E.onClick SelectNextQuote
-                    ]
-                    [ Icons.arrow_forward 24 Inherit
-                    ]
+                , case model.quotes of
+                    [] ->
+                        Html.text ""
+
+                    _ ->
+                        iconButton
+                            [ A.title "Show another quote"
+                            , E.onClick SelectNextQuote
+                            ]
+                            [ Icons.arrow_forward 24 Inherit
+                            ]
 
                 -----------------------------------------
                 -- 🦉

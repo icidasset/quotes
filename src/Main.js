@@ -53,6 +53,7 @@ sdk.initialise().then(async ({ scenario, state }) => {
  * Add a `Quote` to the file system.
  */
 async function addQuote(quote) {
+  log("✍ Adding quote", quote)
   return await fs.write(
     fs.appPath.private(UUID, [ "Collection", quote.id ]),
     JSON.stringify(quote)
@@ -64,6 +65,7 @@ async function addQuote(quote) {
  * Remove a `Quote` from the file system.
  */
 async function removeQuote(quote) {
+  log("✍ Removing quote", quote)
   return await fs.rm(
     fs.appPath.private(UUID, [ "Collection", quote.id ])
   )
@@ -104,18 +106,17 @@ function historyPath() {
 
 
 async function retrieveSelectionHistory() {
-  // const json = await fs.read(historyPath()).catch(_ => null)
-  // return json ? JSON.parse(json) : []
-  return []
+  const json = await fs.read(historyPath()).catch(_ => null)
+  return json ? JSON.parse(json) : []
 }
 
 
 function saveSelectionHistory(listOfQuoteIds) {
-  console.log("Save", JSON.stringify(listOfQuoteIds))
-  // return fs.write(
-  //   historyPath(),
-  //   JSON.stringify(listOfQuoteIds)
-  // )
+  log("👨‍🏫 Saving history", listOfQuoteIds)
+  return fs.write(
+    historyPath(),
+    JSON.stringify(listOfQuoteIds)
+  )
 }
 
 
@@ -127,9 +128,19 @@ function saveSelectionHistory(listOfQuoteIds) {
  * Don't mind me.
  */
 function debugFileSystem(fs) {
+  if (!fs) return
+
   fs.syncHooks.push(cid => {
     console.log("Filesystem change registered 👩‍🔬", cid)
   })
+}
+
+
+/**
+ * Get all your logs here folks.
+ */
+function log(...args) {
+  console.log(...args)
 }
 
 

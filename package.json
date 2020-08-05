@@ -8,6 +8,6 @@
     "tailwindcss": "^1.6.0"
   },
   "dependencies": {
-    "fission-sdk": "^0.14.1"
+    "fission-sdk": "^0.14.2"
   }
 }

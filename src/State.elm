@@ -18,20 +18,31 @@ import Time
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
+        initialSeed =
+            Random.initialSeed flags.currentTime
+
         quotes =
             Maybe.withDefault [] flags.quotes
 
         selectedQuote =
-            pickRandomQuote
-                (Random.initialSeed flags.currentTime)
-                flags.selectionHistory
-                quotes
+            if flags.authenticated then
+                pickRandomQuote
+                    initialSeed
+                    flags.selectionHistory
+                    quotes
+
+            else
+                ( Nothing, initialSeed )
 
         ( selectionHistory, selectionHistoryCmd ) =
-            maybeAddToSelectionHistory
-                flags.selectionHistory
-                quotes
-                (Tuple.first selectedQuote)
+            if flags.authenticated then
+                maybeAddToSelectionHistory
+                    flags.selectionHistory
+                    quotes
+                    (Tuple.first selectedQuote)
+
+            else
+                ( flags.selectionHistory, Cmd.none )
     in
     ( -----------------------------------------
       -- Model
@@ -199,7 +210,12 @@ gotCurrentTime time model =
 
 importedQuotes : List Quote -> Manager
 importedQuotes quotes model =
-    Return.singleton { model | quotes = model.quotes ++ quotes }
+    case model.quotes of
+        [] ->
+            selectNextQuote { model | quotes = quotes }
+
+        _ ->
+            Return.singleton { model | quotes = model.quotes ++ quotes }
 
 
 removeConfirmation : Manager
