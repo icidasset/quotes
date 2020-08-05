@@ -54,6 +54,7 @@ type
       -- Other
       -----------------------------------------
     | GotCurrentTime Time.Posix
+    | ImportedQuotes (List Quote)
     | RemoveConfirmation
     | SelectNextQuote
     | ShowScreen Screen

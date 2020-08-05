@@ -17,3 +17,10 @@ port saveSelectionHistory : List String -> Cmd msg
 
 
 port signIn : () -> Cmd msg
+
+
+
+-- 📰
+
+
+port importedQuotes : (List Quote -> msg) -> Sub msg

@@ -26,6 +26,7 @@ view model =
         , T.items_center
         , T.mb_12
         , T.neg_translate_x_1over2
+        , T.select_none
         , T.text_base04
         , T.transform
 

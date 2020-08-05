@@ -6,7 +6,7 @@ import Ports
 import Quote exposing (..)
 import Radix exposing (..)
 import Random
-import Return exposing (return)
+import Return exposing (andThen, return)
 import Screen exposing (..)
 import Time
 
@@ -79,6 +79,9 @@ update msg =
         GotCurrentTime a ->
             gotCurrentTime a
 
+        ImportedQuotes a ->
+            importedQuotes a
+
         RemoveConfirmation ->
             removeConfirmation
 
@@ -98,7 +101,10 @@ update msg =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Time.every (60 * 1000) GotCurrentTime
+    Sub.batch
+        [ Ports.importedQuotes ImportedQuotes
+        , Time.every (60 * 1000) GotCurrentTime
+        ]
 
 
 
@@ -166,20 +172,14 @@ removeQuote quote model =
     -- Confirmed
     -----------------------------------------
     if model.confirmation == Just Confirm.QuoteRemoval then
-        let
-            quotes =
-                List.filter (.id >> (/=) quote.id) model.quotes
-
-            selectedQuote =
-                Tuple.mapFirst (\_ -> Nothing) model.selectedQuote
-        in
-        return
-            { model
-                | quotes = quotes
-                , selectedQuote = selectedQuote
-                , selectionHistory = List.remove quote.id model.selectionHistory
-            }
-            (Ports.removeQuote quote)
+        quote
+            |> Ports.removeQuote
+            |> return
+                { model
+                    | quotes = List.filter (.id >> (/=) quote.id) model.quotes
+                    , selectionHistory = List.remove quote.id model.selectionHistory
+                }
+            |> andThen selectNextQuote
 
     else
         -----------------------------------------
@@ -195,6 +195,11 @@ removeQuote quote model =
 gotCurrentTime : Time.Posix -> Manager
 gotCurrentTime time model =
     Return.singleton { model | currentTime = time }
+
+
+importedQuotes : List Quote -> Manager
+importedQuotes quotes model =
+    Return.singleton { model | quotes = model.quotes ++ quotes }
 
 
 removeConfirmation : Manager
@@ -254,7 +259,7 @@ maybeAddToSelectionHistory selectionHistory quotes maybeQuote =
             ( new, Ports.saveSelectionHistory new )
 
         Nothing ->
-            ( selectionHistory, Cmd.none )
+            ( [], Ports.saveSelectionHistory [] )
 
 
 pickRandomQuote : Random.Seed -> List String -> List Quote -> ( Maybe Quote, Random.Seed )

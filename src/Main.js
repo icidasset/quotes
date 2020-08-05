@@ -39,6 +39,9 @@ sdk.initialise().then(async ({ scenario, state }) => {
   elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
   elm.ports.signIn.subscribe(sdk.redirectToLobby)
 
+  // Debugging
+  debugFileSystem(fs)
+
 })
 
 
@@ -113,4 +116,38 @@ function saveSelectionHistory(listOfQuoteIds) {
   //   historyPath(),
   //   JSON.stringify(listOfQuoteIds)
   // )
+}
+
+
+
+// 🦉
+
+
+/**
+ * Don't mind me.
+ */
+function debugFileSystem(fs) {
+  fs.syncHooks.push(cid => {
+    console.log("Filesystem change registered 👩‍🔬", cid)
+  })
+}
+
+
+/**
+ * Import a list of quotes.
+ */
+async function importList(rawList) {
+  const timestamp = Date.now()
+  const list = rawList
+    .filter(item => item.author && item.quote)
+    .map((item, idx) => ({ ...item, id: `${timestamp}-${idx + 1}` }))
+
+  // Notify Elm app of imported quotes
+  elm.ports.importedQuotes.send(list)
+
+  // Save to file system
+  await list.reduce(async (acc, item) => {
+    await acc
+    await addQuote(item)
+  }, Promise.resolve(null))
 }
