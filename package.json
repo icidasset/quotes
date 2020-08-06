@@ -1,36 +1,13 @@
 {
-  "name": "quotes",
-  "version": "1.0.0",
-  "description": "Quotes",
-  "main": "config/index.js",
-  "scripts": {
-    "build-dev": "node config/index.js",
-    "build-production": "node config/index.js -- --minify --pack",
-    "clean": "rm -rf ./build && rm -rf ./build-electron",
-    "dev": "npm run clean && npm run build-dev -- --watch --serve",
-    "production": "npm run clean && npm run build-production",
-    "electron": "electron build/electron.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "icid.asset@gmail.com",
-  "license": "ISC",
-  "dependencies": {},
+  "private": true,
+  "type": "module",
   "devDependencies": {
-    "bluebird": "^3.4.3",
-    "electron": "^1.4.0",
-    "electron-packager": "^8.0.0",
-    "enfscopy": "^0.1.0",
-    "google-closure-compiler-js": "^20160916.0.0",
-    "lodash": "^4.15.0",
-    "mustache": "^2.2.1",
-    "postcss": "^5.1.2",
-    "postcss-cssnext": "^2.7.0",
-    "postcss-functions": "^2.1.0",
-    "postcss-modules": "^0.5.2",
-    "postcss-modules-values": "^1.2.2",
-    "postcss-property-lookup": "^1.2.1",
-    "static-base": "^1.0.1",
-    "static-base-contrib": "^1.0.3",
-    "static-base-preset": "^0.3.1"
+    "elm-tailwind-css": "^0.2.0",
+    "postcss-custom-properties": "^9.1.1",
+    "postcss-import": "^12.0.1",
+    "tailwindcss": "^1.6.0"
+  },
+  "dependencies": {
+    "fission-sdk": "^0.14.2"
   }
 }

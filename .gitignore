@@ -1,6 +1,6 @@
+/build
+/elm-stuff
+/node_modules
+/src/Tailwind.elm
+
 .DS_Store
-build
-build-electron
-deploy.sh
-elm-stuff
-node_modules
