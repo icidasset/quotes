@@ -58,7 +58,9 @@ body model =
         --
         , Html.p
             [ T.mt_6
+            , T.mx_3
             , T.text_base03
+            , T.text_center
 
             -- Dark mode
             ------------
@@ -250,7 +252,7 @@ index model =
 quoteView : Quote -> Model -> Html Msg
 quoteView quote model =
     Html.div
-        [ T.max_w_xl ]
+        [ T.max_w_xl, T.mx_6 ]
         [ -----------------------------------------
           -- Quote
           -----------------------------------------
@@ -293,11 +295,14 @@ quoteView quote model =
             , T.cursor_pointer
             , T.left_0
             , T.leading_relaxed
-            , T.mb_12
-            , T.ml_10
-            , T.py_px
+            , T.mb_6
+            , T.ml_6
             , T.text_base04
             , T.text_sm
+
+            --
+            , T.md__mb_12
+            , T.md__ml_10
 
             --
             , T.dark__text_base03
@@ -344,9 +349,9 @@ containerStyles : List (Html.Attribute Msg)
 containerStyles =
     [ T.flex
     , T.flex_col
-    , T.h_screen
     , T.items_center
     , T.justify_center
+    , T.min_h_screen_alt
     , T.text_base00
 
     -- Dark mode

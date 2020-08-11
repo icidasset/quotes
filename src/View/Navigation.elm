@@ -24,11 +24,14 @@ view model =
         , T.fixed
         , T.flex
         , T.items_center
-        , T.mb_12
+        , T.mb_6
         , T.neg_translate_x_1over2
         , T.select_none
         , T.text_base04
         , T.transform
+
+        --
+        , T.md__mb_12
 
         -- Dark mode
         ------------
@@ -99,6 +102,9 @@ view model =
                 -----------------------------------------
                 , case model.quotes of
                     [] ->
+                        Html.text ""
+
+                    [ _ ] ->
                         Html.text ""
 
                     _ ->

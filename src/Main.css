@@ -9,16 +9,27 @@
 /* Base
    ---- */
 
+html, body {
+  height: 100vh;
+  height: -webkit-fill-available;
+}
+
 body {
-  @apply bg-base07 font-body h-screen;
+  @apply bg-base07 font-body;
   background-image: var(--bg-light);
+  text-rendering: optimizeLegibility;
 }
 
 @screen dark {
   body {
-    @apply bg-base00 font-body h-screen;
+    @apply bg-base00;
     background-image: var(--bg-dark);
   }
+}
+
+.min-h-screen-alt {
+  @apply min-h-screen;
+  min-height: -webkit-fill-available;
 }
 
 
