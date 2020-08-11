@@ -242,14 +242,15 @@ index model =
             quoteView quote model
 
         ( Nothing, _ ) ->
-            note "Nothing here yet, want to add a quote?"
+            Html.div
+                [ E.onClick (ShowScreen Screen.add), T.cursor_pointer ]
+                [ note "Nothing here yet, want to add a quote?" ]
 
 
 quoteView : Quote -> Model -> Html Msg
 quoteView quote model =
     Html.div
-        [ T.max_w_xl
-        ]
+        [ T.max_w_xl ]
         [ -----------------------------------------
           -- Quote
           -----------------------------------------
