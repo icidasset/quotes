@@ -4,3 +4,4 @@
 /src/Tailwind.elm
 
 .DS_Store
+.fission.yaml

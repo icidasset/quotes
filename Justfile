@@ -10,7 +10,7 @@ src 				:= "src"
 	just dev-server & just watch
 
 
-@dev-build: clean css-large elm html js
+@dev-build: clean css-large elm-dev html js
 
 
 @dev-server:
@@ -19,6 +19,19 @@ src 				:= "src"
 
 @install-deps:
 	pnpm install
+
+
+@minify-js:
+	pnpx terser-dir \
+		{{dist}} \
+		--each --extension .js \
+		--patterns "**/*.js, !**/*.min.js" \
+		--pseparator ", " \
+		--output {{dist}} \
+		-- --compress --mangle
+
+
+@production-build: clean css-large elm-production html css-small js minify-js
 
 
 
@@ -54,8 +67,12 @@ src 				:= "src"
 		--post-plugin-after postcss-custom-properties
 
 
-@elm:
+@elm-dev:
 	elm make src/Main.elm --output={{dist}}/application.js # --debug
+
+
+@elm-production:
+	elm make src/Main.elm --output={{dist}}/application.js --optimize
 
 
 @html:
@@ -85,7 +102,7 @@ src 				:= "src"
 
 
 @watch-elm:
-	watchexec -p -w {{src}} -e elm -- just elm
+	watchexec -p -w {{src}} -e elm -- just elm-dev
 
 
 @watch-js:

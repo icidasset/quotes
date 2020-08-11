@@ -9,7 +9,7 @@ const sdk = fissionSdk
 // 🚀
 
 
-let app, fs
+let elm, fs
 
 
 sdk.initialise().then(async ({ scenario, state }) => {

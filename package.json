@@ -2,10 +2,11 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "elm-tailwind-css": "^0.2.0",
+    "elm-tailwind-css": "^0.4.6",
     "postcss-custom-properties": "^9.1.1",
     "postcss-import": "^12.0.1",
-    "tailwindcss": "^1.6.0"
+    "tailwindcss": "^1.6.2",
+    "terser-dir": "^1.0.7"
   },
   "dependencies": {
     "fission-sdk": "^0.14.2"
