@@ -58,7 +58,7 @@ body model =
         --
         , Html.p
             [ T.mt_6
-            , T.mx_3
+            , T.mx_4
             , T.text_base03
             , T.text_center
 
@@ -112,28 +112,13 @@ add model context =
         --
         , T.max_w_md
         , T.mx_auto
-        , T.px_4
+        , T.px_8
         , T.w_full
         ]
         [ -----------------------------------------
-          -- Author
+          -- Quote
           -----------------------------------------
-          label "Author"
-        , Html.input
-            ("Marcus Aurelius"
-                |> textfieldAttributes
-                |> List.append
-                    [ A.name "author"
-                    , A.required True
-                    , E.onInput GotAddInputForAuthor
-                    ]
-            )
-            []
-
-        -----------------------------------------
-        -- Quote
-        -----------------------------------------
-        , label "Quote"
+          label "Quote"
         , Html.textarea
             ("""
              Very little is needed to make a happy life;
@@ -152,6 +137,21 @@ add model context =
                     --
                     , T.h_40
                     , T.resize_none
+                    ]
+            )
+            []
+
+        -----------------------------------------
+        -- Author
+        -----------------------------------------
+        , label "Author"
+        , Html.input
+            ("Marcus Aurelius"
+                |> textfieldAttributes
+                |> List.append
+                    [ A.name "author"
+                    , A.required True
+                    , E.onInput GotAddInputForAuthor
                     ]
             )
             []
@@ -252,15 +252,18 @@ index model =
 quoteView : Quote -> Model -> Html Msg
 quoteView quote model =
     Html.div
-        [ T.max_w_xl, T.mx_6 ]
+        [ T.max_w_xl, T.mx_8, T.my_20 ]
         [ -----------------------------------------
           -- Quote
           -----------------------------------------
           Html.div
             [ T.font_display
             , T.leading_snug
-            , T.text_4xl
-            , T.text_justify
+            , T.text_3xl
+            , T.text_left
+
+            --
+            , T.md__text_4xl
             ]
             [ Html.text quote.quote ]
 
@@ -290,13 +293,13 @@ quoteView quote model =
             , E.onClick SelectNextQuote
 
             --
-            , T.absolute
             , T.bottom_0
             , T.cursor_pointer
+            , T.fixed
             , T.left_0
             , T.leading_relaxed
             , T.mb_6
-            , T.ml_6
+            , T.ml_8
             , T.text_base04
             , T.text_sm
 
@@ -366,6 +369,8 @@ note theNote =
         [ T.font_display
         , T.italic
         , T.opacity_70
+        , T.mx_4
+        , T.text_center
         , T.text_lg
 
         -- Dark mode
