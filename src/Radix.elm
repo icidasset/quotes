@@ -1,10 +1,13 @@
 module Radix exposing (..)
 
+import Browser exposing (UrlRequest)
+import Browser.Navigation as Navigation
 import Confirm exposing (Confirmation)
+import Page exposing (Page)
 import Quote exposing (..)
 import Random
-import Screen exposing (Screen(..))
 import Time
+import Url exposing (Url)
 
 
 
@@ -30,10 +33,11 @@ type alias Model =
     { authenticated : Bool
     , confirmation : Maybe Confirmation
     , currentTime : Time.Posix
+    , navKey : Navigation.Key
+    , page : Page
     , quotes : List Quote
     , selectedQuote : ( Maybe Quote, Random.Seed )
     , selectionHistory : List String
-    , screen : Screen
     }
 
 
@@ -46,7 +50,7 @@ type
     -----------------------------------------
     -- CRUD
     -----------------------------------------
-    = AddQuote Screen.AddContext
+    = AddQuote Page.AddContext
     | GotAddInputForAuthor String
     | GotAddInputForQuote String
     | RemoveQuote Quote
@@ -55,10 +59,11 @@ type
       -----------------------------------------
     | GotCurrentTime Time.Posix
     | ImportedQuotes (List Quote)
+    | LinkClicked UrlRequest
     | RemoveConfirmation
     | SelectNextQuote
-    | ShowScreen Screen
     | SignIn
+    | UrlChanged Url
 
 
 type alias Manager =

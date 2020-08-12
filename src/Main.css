@@ -34,14 +34,16 @@ body {
 
 
 
-/* Buttons
-   ------- */
+/* Focus
+   ----- */
 
+a:focus,
 button:focus {
   outline-color: #7bbda4;
 }
 
 @screen dark {
+  a:focus,
   button:focus {
     outline-color: #d28b71;
   }

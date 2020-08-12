@@ -14,7 +14,7 @@ src 				:= "src"
 
 
 @dev-server:
-	devd ./build -p 8002
+	devd --all --notfound=index.html --port 8002 ./build
 
 
 @install-deps:

@@ -7,9 +7,9 @@ import Html.Attributes as A
 import Html.Events as E
 import Material.Icons.Round as Icons
 import Material.Icons.Types exposing (Coloring(..))
+import Page exposing (AddContext, Page(..))
 import Quote exposing (..)
 import Radix exposing (..)
-import Screen exposing (AddContext, Screen(..))
 import Tailwind as T
 import View.Navigation as Navigation
 import View.Svg as Svg
@@ -32,7 +32,7 @@ body model =
         -----------------------------------------
         -- Authenticated
         -----------------------------------------
-        [ case model.screen of
+        [ case model.page of
             Add a ->
                 add model a
 
@@ -244,8 +244,11 @@ index model =
             quoteView quote model
 
         ( Nothing, _ ) ->
-            Html.div
-                [ E.onClick (ShowScreen Screen.add), T.cursor_pointer ]
+            Html.a
+                [ A.href (Page.path { from = model.page, to = Page.add })
+                , T.block
+                , T.cursor_pointer
+                ]
                 [ note "Nothing here yet, want to add a quote?" ]
 
 

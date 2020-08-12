@@ -12,9 +12,13 @@ import View
 
 main : Program Flags Model Msg
 main =
-    Browser.document
+    Browser.application
         { init = State.init
         , view = View.view
         , update = State.update
         , subscriptions = State.subscriptions
+
+        --
+        , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
         }

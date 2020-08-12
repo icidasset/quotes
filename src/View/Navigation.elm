@@ -6,9 +6,9 @@ import Html.Attributes as A
 import Html.Events as E
 import Material.Icons.Round as Icons
 import Material.Icons.Types exposing (Coloring(..))
+import Page exposing (AddContext, Page(..))
 import Quote exposing (..)
 import Radix exposing (..)
-import Screen exposing (AddContext, Screen(..))
 import Tailwind as T
 
 
@@ -37,14 +37,14 @@ view model =
         ------------
         , T.dark__text_base03
         ]
-        (case model.screen of
+        (case model.page of
             Add _ ->
                 -----------------------------------------
                 -- Show
                 -----------------------------------------
                 [ iconButton
                     [ A.title "Show a quote"
-                    , E.onClick (ShowScreen Screen.Index)
+                    , A.href (Page.path { from = model.page, to = Page.Index })
                     ]
                     [ Icons.format_quote 26 Inherit
                     ]
@@ -62,7 +62,7 @@ view model =
                 -----------------------------------------
                 [ iconButton
                     [ A.title "Add a quote"
-                    , E.onClick (ShowScreen Screen.add)
+                    , A.href (Page.path { from = model.page, to = Page.add })
                     ]
                     [ Icons.add_circle 24 Inherit
                     ]
@@ -130,7 +130,7 @@ view model =
 
 iconButton : List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
 iconButton attributes =
-    Html.button
+    Html.a
         (List.append
             [ T.appearance_none
             , T.ml_6

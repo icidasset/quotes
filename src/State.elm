@@ -1,22 +1,25 @@
 module State exposing (..)
 
+import Browser exposing (UrlRequest)
+import Browser.Navigation as Navigation
 import Confirm
 import List.Extra as List
+import Page
 import Ports
 import Quote exposing (..)
 import Radix exposing (..)
 import Random
 import Return exposing (andThen, return)
-import Screen exposing (..)
 import Time
+import Url exposing (Url)
 
 
 
 -- 🌳
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
+init flags url navKey =
     let
         initialSeed =
             Random.initialSeed flags.currentTime
@@ -50,10 +53,11 @@ init flags =
       { authenticated = flags.authenticated
       , confirmation = Nothing
       , currentTime = Time.millisToPosix flags.currentTime
+      , navKey = navKey
+      , page = Page.fromUrl url
       , quotes = quotes
       , selectedQuote = selectedQuote
       , selectionHistory = selectionHistory
-      , screen = Index
       }
       -----------------------------------------
       -- Command
@@ -93,17 +97,20 @@ update msg =
         ImportedQuotes a ->
             importedQuotes a
 
+        LinkClicked a ->
+            linkClicked a
+
         RemoveConfirmation ->
             removeConfirmation
 
         SelectNextQuote ->
             selectNextQuote
 
-        ShowScreen a ->
-            showScreen a
-
         SignIn ->
             signIn
+
+        UrlChanged a ->
+            urlChanged a
 
 
 
@@ -122,7 +129,7 @@ subscriptions _ =
 -- 🛠  ▒▒  CRUD
 
 
-addQuote : Screen.AddContext -> Manager
+addQuote : Page.AddContext -> Manager
 addQuote properties model =
     let
         unixTime =
@@ -150,12 +157,16 @@ addQuote properties model =
     in
     [ Ports.addQuote quote
     , selectionHistoryCmd
+
+    --
+    , { from = model.page, to = Page.Index }
+        |> Page.path
+        |> Navigation.pushUrl model.navKey
     ]
         |> Cmd.batch
         |> return
             { model
                 | quotes = newCollection
-                , screen = Index
                 , selectedQuote = Tuple.mapFirst (\_ -> Just quote) model.selectedQuote
                 , selectionHistory = selectionHistory
             }
@@ -164,16 +175,16 @@ addQuote properties model =
 gotAddInputForAuthor : String -> Manager
 gotAddInputForAuthor input model =
     (\c -> { c | author = input })
-        |> (\map -> Screen.mapAdd map model.screen)
-        |> (\screen -> { model | screen = screen })
+        |> (\map -> Page.mapAdd map model.page)
+        |> (\page -> { model | page = page })
         |> Return.singleton
 
 
 gotAddInputForQuote : String -> Manager
 gotAddInputForQuote input model =
     (\c -> { c | quote = input })
-        |> (\map -> Screen.mapAdd map model.screen)
-        |> (\screen -> { model | screen = screen })
+        |> (\map -> Page.mapAdd map model.page)
+        |> (\page -> { model | page = page })
         |> Return.singleton
 
 
@@ -218,6 +229,16 @@ importedQuotes quotes model =
             Return.singleton { model | quotes = model.quotes ++ quotes }
 
 
+linkClicked : UrlRequest -> Manager
+linkClicked request model =
+    case request of
+        Browser.Internal url ->
+            return model (Navigation.pushUrl model.navKey <| Url.toString url)
+
+        Browser.External href ->
+            return model (Navigation.load href)
+
+
 removeConfirmation : Manager
 removeConfirmation model =
     Return.singleton { model | confirmation = Nothing }
@@ -246,14 +267,14 @@ selectNextQuote model =
         selectionHistoryCmd
 
 
-showScreen : Screen -> Manager
-showScreen screen model =
-    Return.singleton { model | screen = screen }
-
-
 signIn : Manager
 signIn model =
     return model (Ports.signIn ())
+
+
+urlChanged : Url -> Manager
+urlChanged url model =
+    Return.singleton { model | page = Page.fromUrl url }
 
 
 
