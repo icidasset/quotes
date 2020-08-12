@@ -43,6 +43,7 @@ view model =
                 -- Show
                 -----------------------------------------
                 [ iconButton
+                    Link
                     [ A.title "Show a quote"
                     , A.href (Page.path { from = model.page, to = Page.Index })
                     ]
@@ -61,6 +62,7 @@ view model =
                 -- Add
                 -----------------------------------------
                 [ iconButton
+                    Link
                     [ A.title "Add a quote"
                     , A.href (Page.path { from = model.page, to = Page.add })
                     ]
@@ -77,6 +79,7 @@ view model =
                                 model.confirmation == Just Confirm.QuoteRemoval
                         in
                         iconButton
+                            Button
                             [ A.title "Remove this quote"
                             , E.onClick (RemoveQuote quote)
 
@@ -109,6 +112,7 @@ view model =
 
                     _ ->
                         iconButton
+                            Button
                             [ A.title "Show another quote"
                             , E.onClick SelectNextQuote
                             ]
@@ -128,9 +132,20 @@ view model =
 -- ⚗️
 
 
-iconButton : List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
-iconButton attributes =
-    Html.a
+type ButtonType
+    = Button
+    | Link
+
+
+iconButton : ButtonType -> List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
+iconButton btnType attributes =
+    (case btnType of
+        Button ->
+            Html.button
+
+        Link ->
+            Html.a
+    )
         (List.append
             [ T.appearance_none
             , T.ml_6
@@ -149,7 +164,7 @@ iconButton attributes =
 
 more =
     iconButton
-        [ A.title "Additional actions"
-        ]
+        Button
+        [ A.title "Additional actions" ]
         [ Icons.more_vert 24 Inherit
         ]
