@@ -44,7 +44,8 @@ add =
 
 fromUrl : Url -> Page
 fromUrl url =
-    url
+    -- Hash-based routing
+    { url | path = Maybe.withDefault "" url.fragment }
         |> Url.parse parser
         |> Maybe.withDefault Index
 
@@ -52,12 +53,15 @@ fromUrl url =
 path : { from : Page, to : Page } -> String
 path { from, to } =
     let
+        -- For SPA routing, which we don't have atm:
+        -- prefix =
+        --     if from == Index then
+        --         ""
+        --
+        --     else
+        --         "../"
         prefix =
-            if from == Index then
-                ""
-
-            else
-                "../"
+            "#/"
     in
     String.append
         prefix
