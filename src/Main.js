@@ -38,6 +38,7 @@ sdk.initialise().then(async ({ scenario, state }) => {
   elm.ports.removeQuote.subscribe(removeQuote)
   elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
   elm.ports.signIn.subscribe(sdk.redirectToLobby)
+  elm.ports.triggerRepaint.subscribe(triggerRepaint)
 
   // Debugging
   debugFileSystem(fs)
@@ -161,4 +162,20 @@ async function importList(rawList) {
     await acc
     await addQuote(item)
   }, Promise.resolve(null))
+}
+
+
+/**
+ * We have this because of an edge-case with -webkit-fill-available.
+ * When you focus on an input field on iOS it zooms in, which is fine.
+ * But if you then remove that element, -webkit-fill-available doesn't reset properly.
+ * Hence this function.
+ */
+function triggerRepaint() {
+  setTimeout(() => document.body.style.transform = "scale(1)", 0)
+  setTimeout(() => document.body.style.transform = "", 16)
+  setTimeout(() => document.body.style.transform = "scale(1)", 160)
+  setTimeout(() => document.body.style.transform = "", 176)
+  setTimeout(() => document.body.style.transform = "scale(1)", 320)
+  setTimeout(() => document.body.style.transform = "", 336)
 }

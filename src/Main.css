@@ -10,14 +10,15 @@
    ---- */
 
 html, body {
-  height: 100vh;
-  height: -webkit-fill-available;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 body {
   @apply bg-base07 font-body;
   background-image: var(--bg-light);
   text-rendering: optimizeLegibility;
+  touch-action: none;
 }
 
 @screen dark {

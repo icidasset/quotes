@@ -148,6 +148,7 @@ iconButton btnType attributes =
     )
         (List.append
             [ T.appearance_none
+            , T.cursor_pointer
             , T.ml_6
             , T.rounded
 

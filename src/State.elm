@@ -156,6 +156,7 @@ addQuote properties model =
                 (Just quote)
     in
     [ Ports.addQuote quote
+    , Ports.triggerRepaint ()
     , selectionHistoryCmd
 
     --

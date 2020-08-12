@@ -19,6 +19,9 @@ port saveSelectionHistory : List String -> Cmd msg
 port signIn : () -> Cmd msg
 
 
+port triggerRepaint : () -> Cmd msg
+
+
 
 -- 📰
 

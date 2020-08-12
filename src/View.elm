@@ -241,7 +241,40 @@ index : Model -> Html Msg
 index model =
     case model.selectedQuote of
         ( Just quote, _ ) ->
-            quoteView quote model
+            Html.div
+                []
+                [ quoteView quote model
+
+                -----------------------------------------
+                -- History Counter
+                -----------------------------------------
+                , Html.div
+                    [ A.title "Quotes seen from collection"
+                    , E.onClick SelectNextQuote
+
+                    --
+                    , T.bottom_0
+                    , T.cursor_pointer
+                    , T.fixed
+                    , T.left_0
+                    , T.leading_relaxed
+                    , T.mb_6
+                    , T.ml_8
+                    , T.text_base04
+                    , T.text_sm
+
+                    --
+                    , T.md__mb_12
+                    , T.md__ml_10
+
+                    --
+                    , T.dark__text_base03
+                    ]
+                    [ Html.text (String.fromInt <| List.length model.selectionHistory)
+                    , Html.text " of "
+                    , Html.text (String.fromInt <| List.length model.quotes)
+                    ]
+                ]
 
         ( Nothing, _ ) ->
             Html.a
@@ -255,7 +288,10 @@ index model =
 quoteView : Quote -> Model -> Html Msg
 quoteView quote model =
     Html.div
-        [ T.max_w_xl, T.mx_8, T.my_20 ]
+        [ T.max_w_xl
+        , T.mx_8
+        , T.my_20
+        ]
         [ -----------------------------------------
           -- Quote
           -----------------------------------------
@@ -286,36 +322,6 @@ quoteView quote model =
             ]
             [ Html.span [ T.inline_block, T.mr_2 ] [ Html.text "—" ]
             , Html.span [ T.inline_block ] [ Html.text quote.author ]
-            ]
-
-        -----------------------------------------
-        -- History Counter
-        -----------------------------------------
-        , Html.div
-            [ A.title "Quotes seen from collection"
-            , E.onClick SelectNextQuote
-
-            --
-            , T.bottom_0
-            , T.cursor_pointer
-            , T.fixed
-            , T.left_0
-            , T.leading_relaxed
-            , T.mb_6
-            , T.ml_8
-            , T.text_base04
-            , T.text_sm
-
-            --
-            , T.md__mb_12
-            , T.md__ml_10
-
-            --
-            , T.dark__text_base03
-            ]
-            [ Html.text (String.fromInt <| List.length model.selectionHistory)
-            , Html.text " of "
-            , Html.text (String.fromInt <| List.length model.quotes)
             ]
         ]
 
