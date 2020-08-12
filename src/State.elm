@@ -135,8 +135,8 @@ addQuote properties model =
 
         quote =
             { id = id
-            , author = properties.author
-            , quote = properties.quote
+            , author = String.trim properties.author
+            , quote = String.trim properties.quote
             }
 
         newCollection =
