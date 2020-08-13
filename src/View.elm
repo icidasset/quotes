@@ -118,7 +118,7 @@ add model context =
         [ -----------------------------------------
           -- Quote
           -----------------------------------------
-          label "Quote"
+          label "quote" "Quote"
         , Html.textarea
             ("""
              Very little is needed to make a happy life;
@@ -144,7 +144,7 @@ add model context =
         -----------------------------------------
         -- Author
         -----------------------------------------
-        , label "Author"
+        , label "author" "Author"
         , Html.input
             ("Marcus Aurelius"
                 |> textfieldAttributes
@@ -177,10 +177,13 @@ add model context =
         ]
 
 
-label : String -> Html Msg
-label l =
+label : String -> String -> Html Msg
+label n l =
     Html.label
-        [ T.block
+        [ A.for n
+
+        --
+        , T.block
         , T.font_medium
         , T.mb_2
         , T.text_base01
