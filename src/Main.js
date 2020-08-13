@@ -6,6 +6,15 @@ const UUID = "icidasset.quotes"
 const sdk = fissionSdk
 
 
+// 🍱
+
+
+if (sdk.setup.debug) {
+  sdk.setup.debug({ enabled: true })
+}
+
+
+
 // 🚀
 
 
@@ -55,7 +64,8 @@ sdk.initialise().then(async ({ scenario, state }) => {
  */
 async function addQuote(quote) {
   log("✍ Adding quote", quote)
-  return await fs.write(
+  return await transaction(
+    fs.write,
     fs.appPath.private(UUID, [ "Collection", quote.id ]),
     JSON.stringify(quote)
   )
@@ -67,7 +77,8 @@ async function addQuote(quote) {
  */
 async function removeQuote(quote) {
   log("✍ Removing quote", quote)
-  return await fs.rm(
+  return await transaction(
+    fs.rm,
     fs.appPath.private(UUID, [ "Collection", quote.id ])
   )
 }
@@ -114,7 +125,8 @@ async function retrieveSelectionHistory() {
 
 function saveSelectionHistory(listOfQuoteIds) {
   log("👨‍🏫 Saving history", listOfQuoteIds)
-  return fs.write(
+  return transaction(
+    fs.write,
     historyPath(),
     JSON.stringify(listOfQuoteIds)
   )
@@ -122,26 +134,50 @@ function saveSelectionHistory(listOfQuoteIds) {
 
 
 
-// 🦉
+// TRANSACTIONS
+
+
+const transactionQueue = []
 
 
 /**
- * Don't mind me.
+ * Process the next item in the transaction queue.
  */
-function debugFileSystem(fs) {
-  if (!fs) return
-
-  fs.syncHooks.push(cid => {
-    console.log("Filesystem change registered 👩‍🔬", cid)
-  })
+function nextTransaction() {
+  const nextAction = transactionQueue.shift()
+  if (nextAction) nextAction()
 }
 
 
 /**
- * Get all your logs here folks.
+ * The Fission filesystem doesn't support parallel writes yet.
+ * This function is a way around that.
+ *
+ * @param method The filesystem method to run
+ * @param methodArguments The arguments for the given filesystem method
  */
-function log(...args) {
-  console.log(...args)
+function transaction(method, ...methodArguments) {
+  transactionQueue.push(async () => {
+    await method.apply(fs, methodArguments)
+    nextTransaction()
+  })
+
+  if (transactionQueue.length === 1) {
+    nextTransaction()
+  }
+}
+
+
+
+// 🦉
+
+
+function debugFileSystem(fs) {
+  if (!fs) return
+
+  fs.syncHooks.push(cid => {
+    log("Filesystem change registered 👩‍🔬", cid)
+  })
 }
 
 
@@ -162,6 +198,11 @@ async function importList(rawList) {
     await acc
     await addQuote(item)
   }, Promise.resolve(null))
+}
+
+
+function log(...args) {
+  console.log(...args)
 }
 
 
