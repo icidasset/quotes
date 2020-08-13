@@ -9,6 +9,6 @@
     "terser-dir": "^1.0.7"
   },
   "dependencies": {
-    "fission-sdk": "^0.14.2"
+    "fission-sdk": "0.16.0-alpha-6"
   }
 }

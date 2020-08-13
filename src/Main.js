@@ -21,38 +21,41 @@ if (sdk.setup.debug) {
 let elm, fs
 
 
-sdk.initialise().then(async ({ scenario, state }) => {
-  const { authenticated, newUser, throughLobby, username } = state
+sdk
+  .initialise()
+  .catch(temporaryAlphaCodeHandler)
+  .then(async ({ scenario, state }) => {
+    const { authenticated, newUser, throughLobby, username } = state
 
-  // The file system,
-  // we'll use this later (see CRUD functions below)
-  fs = state.fs
+    // The file system,
+    // we'll use this later (see CRUD functions below)
+    fs = state.fs
 
-  // Initialise Elm app
-  elm = Elm.Main.init({
-    flags: {
-      authenticated,
+    // Initialise Elm app
+    elm = Elm.Main.init({
+      flags: {
+        authenticated,
 
-      currentTime:        Date.now(),
-      newUser:            newUser || null,
-      quotes:             authenticated ? await loadQuotes() : null,
-      selectionHistory:   authenticated ? await retrieveSelectionHistory() : [],
-      throughLobby:       throughLobby || false,
-      username:           username || null
-    }
+        currentTime:        Date.now(),
+        newUser:            newUser || null,
+        quotes:             authenticated ? await loadQuotes() : null,
+        selectionHistory:   authenticated ? await retrieveSelectionHistory() : [],
+        throughLobby:       throughLobby || false,
+        username:           username || null
+      }
+    })
+
+    // Communicate with Elm app
+    elm.ports.addQuote.subscribe(addQuote)
+    elm.ports.removeQuote.subscribe(removeQuote)
+    elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
+    elm.ports.signIn.subscribe(sdk.redirectToLobby)
+    elm.ports.triggerRepaint.subscribe(triggerRepaint)
+
+    // Debugging
+    debugFileSystem(fs)
+
   })
-
-  // Communicate with Elm app
-  elm.ports.addQuote.subscribe(addQuote)
-  elm.ports.removeQuote.subscribe(removeQuote)
-  elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
-  elm.ports.signIn.subscribe(sdk.redirectToLobby)
-  elm.ports.triggerRepaint.subscribe(triggerRepaint)
-
-  // Debugging
-  debugFileSystem(fs)
-
-})
 
 
 
@@ -203,6 +206,29 @@ async function importList(rawList) {
 
 function log(...args) {
   console.log(...args)
+}
+
+
+/**
+ * TODO:
+ * Remove this temporary code when the alpha-tester folks
+ * have upgraded their code. Later we'll have filesystem versioning.
+ */
+async function temporaryAlphaCodeHandler(err) {
+  console.error(err)
+
+  if (
+    err.message.indexOf("Could not find header value: metadata") > -1 ||
+    err.message.indexOf("Could not find index for node") > -1
+  ) {
+    await (await sdk.fs.empty()).sync()
+    alert("Thanks for testing our alpha version of the Fission SDK. We refactored the file system which is not backwards compatible, so we'll have to create a new file system for you.")
+    return sdk.initialise()
+
+  } else {
+    throw new Error(err)
+
+  }
 }
 
 
