@@ -287,12 +287,22 @@ maybeAddToSelectionHistory selectionHistory quotes maybeQuote =
     case maybeQuote of
         Just quote ->
             let
-                new =
-                    if List.length selectionHistory + 1 > List.length quotes then
-                        [ quote.id ]
+                ( x, y ) =
+                    ( List.length selectionHistory
+                    , List.length quotes
+                    )
 
-                    else
-                        quote.id :: selectionHistory
+                new =
+                    case ( selectionHistory, x == y ) of
+                        ( lastSelectedId :: _, True ) ->
+                            if y == 1 then
+                                [ quote.id ]
+
+                            else
+                                [ quote.id, lastSelectedId ]
+
+                        _ ->
+                            quote.id :: selectionHistory
             in
             ( new, Ports.saveSelectionHistory new )
 
@@ -303,14 +313,25 @@ maybeAddToSelectionHistory selectionHistory quotes maybeQuote =
 pickRandomQuote : Random.Seed -> List String -> List Quote -> ( Maybe Quote, Random.Seed )
 pickRandomQuote seed selectionHistory quotes =
     let
-        unselectedQuotes =
-            if List.length selectionHistory + 1 > List.length quotes then
-                quotes
+        ( x, y ) =
+            ( List.length selectionHistory
+            , List.length quotes
+            )
 
-            else
-                List.filter
-                    (\q -> List.notMember q.id selectionHistory)
-                    quotes
+        filterFunction =
+            case ( selectionHistory, x == y ) of
+                ( lastSelectedId :: _, True ) ->
+                    if y == 1 then
+                        \_ -> True
+
+                    else
+                        .id >> (/=) lastSelectedId
+
+                _ ->
+                    \quote -> List.notMember quote.id selectionHistory
+
+        unselectedQuotes =
+            List.filter filterFunction quotes
     in
     seed
         |> Random.step (Random.int 0 <| List.length unselectedQuotes - 1)
