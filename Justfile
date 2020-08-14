@@ -4,9 +4,10 @@ export NODE_OPTIONS := "--no-warnings"
 # Variables
 # ---------
 
-dist 				:= "build"
-dist_css 		:= dist + "/application.css"
-src 				:= "src"
+dist 						:= "build"
+dist_css 				:= dist + "/application.css"
+src 						:= "src"
+workbox_config 	:= "workbox.config.cjs"
 
 
 # Tasks
@@ -16,7 +17,7 @@ src 				:= "src"
 	just dev-server & just watch
 
 
-@dev-build: clean css-large elm-dev html js static
+@dev-build: clean css-large elm-dev html js-dev static
 
 
 @dev-server:
@@ -28,7 +29,7 @@ src 				:= "src"
 	pnpm install
 
 
-@production-build: clean css-large elm-production html css-small js minify-js static
+@production-build: clean css-large elm-production html css-small js-production static
 
 
 
@@ -85,15 +86,22 @@ src 				:= "src"
 	cp {{src}}/Html/Main.html {{dist}}/index.html
 
 
-@js:
-	echo "🍿  Copying Javascript"
+@js-dev:
+	echo "🍿  Copying & Compiling Javascript in development mode"
 	mkdir -p {{dist}}/web_modules
 	cp ./node_modules/fission-sdk/index.umd.js {{dist}}/web_modules/fission-sdk.js
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
+	pnpx workbox generateSW {{workbox_config}}
+	pnpx workbox copyLibraries {{dist}}/
 
-@minify-js:
-	echo "🍿  Minifying Javascript"
+
+@js-production:
+	echo "🍿  Copying & Compiling Javascript in production mode"
+	mkdir -p {{dist}}/web_modules
+	cp ./node_modules/fission-sdk/index.umd.js {{dist}}/web_modules/fission-sdk.js
+	cp {{src}}/Javascript/Main.js {{dist}}/index.js
+
 	pnpx terser-dir \
 		{{dist}} \
 		--each --extension .js \
@@ -101,6 +109,9 @@ src 				:= "src"
 		--pseparator ", " \
 		--output {{dist}} \
 		-- --compress --mangle
+
+	NODE_ENV=production pnpx workbox generateSW {{workbox_config}}
+	NODE_ENV=production pnpx workbox copyLibraries {{dist}}/
 
 
 @static:
