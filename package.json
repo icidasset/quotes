@@ -11,6 +11,6 @@
     "workbox-strategies": "^5.1.3"
   },
   "dependencies": {
-    "fission-sdk": "0.16.0-alpha-6"
+    "webnative": "0.17.0"
   }
 }

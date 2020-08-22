@@ -8,6 +8,7 @@ import Quote exposing (..)
 import Random
 import Time
 import Url exposing (Url)
+import UserData exposing (UserData)
 
 
 
@@ -18,8 +19,6 @@ type alias Flags =
     { authenticated : Bool
     , currentTime : Int
     , newUser : Maybe Bool
-    , quotes : Maybe (List Quote)
-    , selectionHistory : List String
     , throughLobby : Bool
     , username : Maybe String
     }
@@ -30,14 +29,13 @@ type alias Flags =
 
 
 type alias Model =
-    { authenticated : Bool
-    , confirmation : Maybe Confirmation
+    { confirmation : Maybe Confirmation
     , currentTime : Time.Posix
+    , isLoading : Bool
     , navKey : Navigation.Key
     , page : Page
-    , quotes : List Quote
     , selectedQuote : ( Maybe Quote, Random.Seed )
-    , selectionHistory : List String
+    , userData : Maybe UserData
     }
 
 
@@ -60,6 +58,7 @@ type
     | GotCurrentTime Time.Posix
     | ImportedQuotes (List Quote)
     | LinkClicked UrlRequest
+    | LoadUserData UserData
     | RemoveConfirmation
     | SelectNextQuote
     | SignIn
