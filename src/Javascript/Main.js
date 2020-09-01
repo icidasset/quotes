@@ -2,30 +2,36 @@
 // | (• ◡•)| (❍ᴥ❍ʋ)
 
 
-const UUID = "icidasset.quotes"
-const sdk = fissionSdk
+const wn = webnative
 
 
 // 🍱
 
 
-if (sdk.setup.debug) {
-  sdk.setup.debug({ enabled: true })
-}
+wn.setup.debug({ enabled: true })
 
 
 
 // 🚀
 
 
-let elm, fs
+let elm, fs, pre
 
 
-sdk
-  .initialise()
+wn.initialise({
+    app: {
+      name: "Quotes",
+      creator: "icidasset"
+    }
+  })
+
   .catch(temporaryAlphaCodeHandler)
-  .then(async ({ scenario, state }) => {
+
+  .then(async ({ prerequisites, scenario, state }) => {
     const { authenticated, newUser, throughLobby, username } = state
+
+    // Expose prerequisites
+    pre = prerequisites
 
     // The file system,
     // we'll use this later (see CRUD functions below)
@@ -38,8 +44,6 @@ sdk
 
         currentTime:        Date.now(),
         newUser:            newUser || null,
-        quotes:             authenticated ? await loadQuotes() : null,
-        selectionHistory:   authenticated ? await retrieveSelectionHistory() : [],
         throughLobby:       throughLobby || false,
         username:           username || null
       }
@@ -49,11 +53,14 @@ sdk
     elm.ports.addQuote.subscribe(addQuote)
     elm.ports.removeQuote.subscribe(removeQuote)
     elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
-    elm.ports.signIn.subscribe(sdk.redirectToLobby)
+    elm.ports.signIn.subscribe(() => wn.redirectToLobby(prerequisites))
     elm.ports.triggerRepaint.subscribe(triggerRepaint)
 
-    // Debugging
-    debugFileSystem(fs)
+    // Continue Elm initialisation
+    if (authenticated) elm.ports.loadUserData.send({
+      quotes:             await loadQuotes(),
+      selectionHistory:   await retrieveSelectionHistory(),
+    })
 
   })
 
@@ -66,11 +73,11 @@ sdk
  * Add a `Quote` to the file system.
  */
 async function addQuote(quote) {
-  log("✍ Adding quote", quote)
+  console.log("✍ Adding quote", quote)
   return await transaction(
     fs.write,
-    fs.appPath.private(UUID, [ "Collection", quote.id ]),
-    JSON.stringify(quote)
+    fs.appPath([ "Collection", `${quote.id}.json` ]),
+    toJsonBlob(quote)
   )
 }
 
@@ -79,10 +86,10 @@ async function addQuote(quote) {
  * Remove a `Quote` from the file system.
  */
 async function removeQuote(quote) {
-  log("✍ Removing quote", quote)
+  console.log("✍ Removing quote", quote)
   return await transaction(
     fs.rm,
-    fs.appPath.private(UUID, [ "Collection", quote.id ])
+    fs.appPath([ "Collection", `${quote.id}.json` ])
   )
 }
 
@@ -93,7 +100,7 @@ async function removeQuote(quote) {
  */
 function loadQuotes() {
   const quotesPath =
-    fs.appPath.private(UUID, [ "Collection" ])
+    fs.appPath([ "Collection" ])
 
   return fs
     // List collection.
@@ -104,9 +111,11 @@ function loadQuotes() {
 
     // Transform the object into a list,
     // and retrieve each quote.
-    .then(Object.entries)
+    .then(Object.keys)
     .then(links => Promise.all(
-      links.map(([name, _]) => fs.cat(`${quotesPath}/${name}`).then(JSON.parse))
+      links
+        .filter(name => name.endsWith(".json"))
+        .map(name => fs.cat(`${quotesPath}/${name}`).then(JSON.parse))
     ))
 }
 
@@ -116,7 +125,7 @@ function loadQuotes() {
 
 
 function historyPath() {
-  return fs.appPath.private(UUID, [ "History", "selection.json" ])
+  return fs.appPath([ "History", "selection.json" ])
 }
 
 
@@ -126,66 +135,23 @@ async function retrieveSelectionHistory() {
 }
 
 
-function saveSelectionHistory(listOfQuoteIds) {
-  log("👨‍🏫 Saving history", listOfQuoteIds)
-  return transaction(
+async function saveSelectionHistory(listOfQuoteIds) {
+  console.log("👨‍🏫 Saving history", listOfQuoteIds)
+  await transaction(
     fs.write,
     historyPath(),
-    JSON.stringify(listOfQuoteIds)
+    toJsonBlob(listOfQuoteIds)
   )
 }
 
 
 
-// TRANSACTIONS
-
-
-const transactionQueue = []
-
-
-/**
- * Process the next item in the transaction queue.
- */
-function nextTransaction() {
-  const nextAction = transactionQueue.shift()
-  if (nextAction) nextAction()
-}
-
-
-/**
- * The Fission filesystem doesn't support parallel writes yet.
- * This function is a way around that.
- *
- * @param method The filesystem method to run
- * @param methodArguments The arguments for the given filesystem method
- */
-function transaction(method, ...methodArguments) {
-  transactionQueue.push(async () => {
-    await method.apply(fs, methodArguments)
-    nextTransaction()
-  })
-
-  if (transactionQueue.length === 1) {
-    nextTransaction()
-  }
-}
-
-
-
-// 🦉
-
-
-function debugFileSystem(fs) {
-  if (!fs) return
-
-  fs.syncHooks.push(cid => {
-    log("Filesystem change registered 👩‍🔬", cid)
-  })
-}
+// 🔬
 
 
 /**
  * Import a list of quotes.
+ * TODO: Make this more performant
  */
 async function importList(rawList) {
   const timestamp = Date.now()
@@ -204,9 +170,19 @@ async function importList(rawList) {
 }
 
 
-function log(...args) {
-  console.log(...args)
+/**
+ * Transform into a JSON Blob.
+ */
+function toJsonBlob(value) {
+  return new Blob(
+    [ JSON.stringify(value) ],
+    { type: "text/plain" }
+  )
 }
+
+
+
+// 💩
 
 
 /**
@@ -219,11 +195,13 @@ async function temporaryAlphaCodeHandler(err) {
 
   if (
     err.message.indexOf("Could not find header value: metadata") > -1 ||
-    err.message.indexOf("Could not find index for node") > -1
+    err.message.indexOf("Could not find index for node") > -1 ||
+    err.message.indexOf("Could not parse a valid private tree using the given key") > -1
   ) {
-    await (await sdk.fs.empty()).sync()
-    alert("Thanks for testing our alpha version of the Fission SDK. We refactored the file system which is not backwards compatible, so we'll have to create a new file system for you.")
-    return sdk.initialise()
+    fs = await wn.fs.empty({ keyName: "filesystem-lobby", prerequisites: pre })
+    await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publicise
+    alert("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible, so we'll have to create a new file system for you.")
+    return fs
 
   } else {
     throw new Error(err)
@@ -245,4 +223,82 @@ function triggerRepaint() {
   setTimeout(() => document.body.style.transform = "", 176)
   setTimeout(() => document.body.style.transform = "scale(1)", 320)
   setTimeout(() => document.body.style.transform = "", 336)
+}
+
+
+
+// TRANSACTIONS
+// ⚠️ Will be removed soon
+
+
+const transactionQueue = []
+
+
+/**
+ * Process the next item in the transaction queue.
+ */
+function nextTransaction() {
+  const nextAction = transactionQueue.shift()
+  if (nextAction) setTimeout(nextAction, 16)
+  else fs.publicise()
+}
+
+
+/**
+ * The Fission filesystem doesn't support parallel writes yet.
+ * This function is a way around that.
+ *
+ * @param method The filesystem method to run
+ * @param methodArguments The arguments for the given filesystem method
+ */
+async function transaction(method, ...methodArguments) {
+  transactionQueue.push(async () => {
+    await method.apply(fs, methodArguments)
+    nextTransaction()
+  })
+
+  if (transactionQueue.length === 1) {
+    nextTransaction()
+  }
+}
+
+
+
+// SHARED WORKER
+// ⚠️ To do
+//
+// Game plan:
+// - Run `setupIpfsClient` before `initialise`
+// - Run `setupIpfsIframe` before loading the file system
+// - Disable automatic file-system loading by passing option to `initialise`
+// - Load the file system ourselves
+//
+// This will be moved into the SDK later.
+
+
+function setupIpfsClient() {
+  ipfs = IpfsMessagePortClient.detached()
+  wn.ipfs.set(ipfs)
+}
+
+
+function setupIpfsIframe() {
+  return new Promise((resolve) => {
+    const iframe = document.createElement("iframe")
+    iframe.style.width = "0"
+    iframe.style.height = "0"
+    iframe.style.border = "none"
+    document.body.appendChild(iframe)
+
+    iframe.onload = () => {
+      const channel = new MessageChannel()
+      channel.port1.onmessage = ({ ports }) => {
+        IpfsMessagePortClient.attach(ipfs, ports[0])
+      }
+      iframe.contentWindow.postMessage("CONNECT", "*", [ channel.port2 ])
+      resolve()
+    }
+
+    iframe.src = "http://localhost:8001/ipfs.html"
+  })
 }

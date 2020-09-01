@@ -12,6 +12,7 @@ import Random
 import Return exposing (andThen, return)
 import Time
 import Url exposing (Url)
+import UserData exposing (UserData)
 
 
 
@@ -23,46 +24,22 @@ init flags url navKey =
     let
         initialSeed =
             Random.initialSeed flags.currentTime
-
-        quotes =
-            Maybe.withDefault [] flags.quotes
-
-        selectedQuote =
-            if flags.authenticated then
-                pickRandomQuote
-                    initialSeed
-                    flags.selectionHistory
-                    quotes
-
-            else
-                ( Nothing, initialSeed )
-
-        ( selectionHistory, selectionHistoryCmd ) =
-            if flags.authenticated then
-                maybeAddToSelectionHistory
-                    flags.selectionHistory
-                    quotes
-                    (Tuple.first selectedQuote)
-
-            else
-                ( flags.selectionHistory, Cmd.none )
     in
     ( -----------------------------------------
       -- Model
       -----------------------------------------
-      { authenticated = flags.authenticated
-      , confirmation = Nothing
+      { confirmation = Nothing
       , currentTime = Time.millisToPosix flags.currentTime
+      , isLoading = flags.authenticated
       , navKey = navKey
       , page = Page.fromUrl url
-      , quotes = quotes
-      , selectedQuote = selectedQuote
-      , selectionHistory = selectionHistory
+      , selectedQuote = ( Nothing, initialSeed )
+      , userData = Nothing
       }
       -----------------------------------------
       -- Command
       -----------------------------------------
-    , selectionHistoryCmd
+    , Cmd.none
     )
 
 
@@ -100,6 +77,9 @@ update msg =
         LinkClicked a ->
             linkClicked a
 
+        LoadUserData a ->
+            loadUserData a
+
         RemoveConfirmation ->
             removeConfirmation
 
@@ -121,6 +101,7 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Ports.importedQuotes ImportedQuotes
+        , Ports.loadUserData LoadUserData
         , Time.every (60 * 1000) GotCurrentTime
         ]
 
@@ -131,46 +112,54 @@ subscriptions _ =
 
 addQuote : Page.AddContext -> Manager
 addQuote properties model =
-    let
-        unixTime =
-            model.currentTime
-                |> Time.posixToMillis
-                |> String.fromInt
+    case model.userData of
+        Just userData ->
+            let
+                unixTime =
+                    model.currentTime
+                        |> Time.posixToMillis
+                        |> String.fromInt
 
-        id =
-            unixTime ++ "-" ++ String.fromInt (List.length model.quotes)
+                id =
+                    unixTime ++ "-" ++ String.fromInt (List.length userData.quotes)
 
-        quote =
-            { id = id
-            , author = String.trim properties.author
-            , quote = String.trim properties.quote
-            }
+                quote =
+                    { id = id
+                    , author = String.trim properties.author
+                    , quote = String.trim properties.quote
+                    }
 
-        newCollection =
-            model.quotes ++ [ quote ]
+                newCollection =
+                    userData.quotes ++ [ quote ]
 
-        ( selectionHistory, selectionHistoryCmd ) =
-            maybeAddToSelectionHistory
-                model.selectionHistory
-                newCollection
-                (Just quote)
-    in
-    [ Ports.addQuote quote
-    , Ports.triggerRepaint ()
-    , selectionHistoryCmd
+                ( selectionHistory, selectionHistoryCmd ) =
+                    maybeAddToSelectionHistory
+                        userData.selectionHistory
+                        newCollection
+                        (Just quote)
+            in
+            [ Ports.addQuote quote
+            , Ports.triggerRepaint ()
+            , selectionHistoryCmd
 
-    --
-    , { from = model.page, to = Page.Index }
-        |> Page.path
-        |> Navigation.pushUrl model.navKey
-    ]
-        |> Cmd.batch
-        |> return
-            { model
-                | quotes = newCollection
-                , selectedQuote = Tuple.mapFirst (\_ -> Just quote) model.selectedQuote
-                , selectionHistory = selectionHistory
-            }
+            --
+            , { from = model.page, to = Page.Index }
+                |> Page.path
+                |> Navigation.pushUrl model.navKey
+            ]
+                |> Cmd.batch
+                |> return
+                    { model
+                        | selectedQuote = Tuple.mapFirst (\_ -> Just quote) model.selectedQuote
+                        , userData =
+                            Just
+                                { quotes = newCollection
+                                , selectionHistory = selectionHistory
+                                }
+                    }
+
+        Nothing ->
+            Return.singleton model
 
 
 gotAddInputForAuthor : String -> Manager
@@ -195,13 +184,20 @@ removeQuote quote model =
     -- Confirmed
     -----------------------------------------
     if model.confirmation == Just Confirm.QuoteRemoval then
+        let
+            userData =
+                Maybe.map
+                    (\u ->
+                        { u
+                            | quotes = List.filter (.id >> (/=) quote.id) u.quotes
+                            , selectionHistory = List.remove quote.id u.selectionHistory
+                        }
+                    )
+                    model.userData
+        in
         quote
             |> Ports.removeQuote
-            |> return
-                { model
-                    | quotes = List.filter (.id >> (/=) quote.id) model.quotes
-                    , selectionHistory = List.remove quote.id model.selectionHistory
-                }
+            |> return { model | userData = userData }
             |> andThen selectNextQuote
 
     else
@@ -222,12 +218,15 @@ gotCurrentTime time model =
 
 importedQuotes : List Quote -> Manager
 importedQuotes quotes model =
-    case model.quotes of
-        [] ->
-            selectNextQuote { model | quotes = quotes }
+    case Maybe.map (\u -> ( u, u.quotes )) model.userData of
+        Just ( u, [] ) ->
+            selectNextQuote { model | userData = Just { u | quotes = quotes } }
 
-        _ ->
-            Return.singleton { model | quotes = model.quotes ++ quotes }
+        Just ( u, q ) ->
+            Return.singleton { model | userData = Just { u | quotes = q ++ quotes } }
+
+        Nothing ->
+            Return.singleton model
 
 
 linkClicked : UrlRequest -> Manager
@@ -240,6 +239,43 @@ linkClicked request model =
             return model (Navigation.load href)
 
 
+loadUserData : UserData -> Manager
+loadUserData userData model =
+    let
+        ( _, seed ) =
+            model.selectedQuote
+
+        quotes =
+            userData.quotes
+
+        previousSelectionHistory =
+            if List.length userData.selectionHistory > List.length quotes then
+                []
+
+            else
+                userData.selectionHistory
+
+        selectedQuote =
+            pickRandomQuote
+                seed
+                previousSelectionHistory
+                quotes
+
+        ( selectionHistory, selectionHistoryCmd ) =
+            maybeAddToSelectionHistory
+                previousSelectionHistory
+                quotes
+                (Tuple.first selectedQuote)
+    in
+    ( { model
+        | isLoading = False
+        , selectedQuote = selectedQuote
+        , userData = Just { quotes = quotes, selectionHistory = selectionHistory }
+      }
+    , selectionHistoryCmd
+    )
+
+
 removeConfirmation : Manager
 removeConfirmation model =
     Return.singleton { model | confirmation = Nothing }
@@ -247,25 +283,30 @@ removeConfirmation model =
 
 selectNextQuote : Manager
 selectNextQuote model =
-    let
-        selectedQuote =
-            pickRandomQuote
-                (Tuple.second model.selectedQuote)
-                model.selectionHistory
-                model.quotes
+    case model.userData of
+        Just userData ->
+            let
+                selectedQuote =
+                    pickRandomQuote
+                        (Tuple.second model.selectedQuote)
+                        userData.selectionHistory
+                        userData.quotes
 
-        ( selectionHistory, selectionHistoryCmd ) =
-            maybeAddToSelectionHistory
-                model.selectionHistory
-                model.quotes
-                (Tuple.first selectedQuote)
-    in
-    return
-        { model
-            | selectedQuote = selectedQuote
-            , selectionHistory = selectionHistory
-        }
-        selectionHistoryCmd
+                ( selectionHistory, selectionHistoryCmd ) =
+                    maybeAddToSelectionHistory
+                        userData.selectionHistory
+                        userData.quotes
+                        (Tuple.first selectedQuote)
+            in
+            return
+                { model
+                    | selectedQuote = selectedQuote
+                    , userData = Just { userData | selectionHistory = selectionHistory }
+                }
+                selectionHistoryCmd
+
+        Nothing ->
+            Return.singleton model
 
 
 signIn : Manager

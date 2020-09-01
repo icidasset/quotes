@@ -27,6 +27,9 @@ workbox_config 	:= "workbox.config.cjs"
 
 @install-deps:
 	pnpm install
+	mkdir -p web_modules
+	curl -o web_modules/ipfs-message-port-client.min.js https://unpkg.com/ipfs-message-port-client@0.1.2-rc.0/dist/index.min.js
+	cp node_modules/webnative/index.umd.js ./web_modules/webnative.js
 
 
 @production-build: clean css-large elm-production html css-small js-production static
@@ -88,18 +91,17 @@ workbox_config 	:= "workbox.config.cjs"
 
 @js-dev:
 	echo "🍿  Copying & Compiling Javascript in development mode"
-	mkdir -p {{dist}}/web_modules
-	cp ./node_modules/fission-sdk/index.umd.js {{dist}}/web_modules/fission-sdk.js
+	cp -rf web_modules {{dist}}/web_modules
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
 	pnpx workbox generateSW {{workbox_config}}
-	pnpx workbox copyLibraries {{dist}}/
+	# TODO: pnpx workbox copyLibraries {{dist}}/
 
 
 @js-production:
 	echo "🍿  Copying & Compiling Javascript in production mode"
 	mkdir -p {{dist}}/web_modules
-	cp ./node_modules/fission-sdk/index.umd.js {{dist}}/web_modules/fission-sdk.js
+	cp ./node_modules/webnative/index.umd.js {{dist}}/web_modules/webnative.js
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
 	pnpx terser-dir \
@@ -111,7 +113,7 @@ workbox_config 	:= "workbox.config.cjs"
 		-- --compress --mangle
 
 	NODE_ENV=production pnpx workbox generateSW {{workbox_config}}
-	NODE_ENV=production pnpx workbox copyLibraries {{dist}}/
+	# TODO: NODE_ENV=production pnpx workbox copyLibraries {{dist}}/
 
 
 @static:
@@ -141,7 +143,7 @@ workbox_config 	:= "workbox.config.cjs"
 
 
 @watch-js:
-	watchexec -p -w {{src}} -e js -- just js
+	watchexec -p -w {{src}} -e js -- just js-dev
 
 
 @watch-html:

@@ -6,6 +6,7 @@ import Html.Attributes as A
 import Html.Events as E
 import Material.Icons.Round as Icons
 import Material.Icons.Types exposing (Coloring(..))
+import Maybe.Extra as Maybe
 import Page exposing (AddContext, Page(..))
 import Quote exposing (..)
 import Radix exposing (..)
@@ -103,7 +104,7 @@ view model =
                 -----------------------------------------
                 -- Next
                 -----------------------------------------
-                , case model.quotes of
+                , case Maybe.unwrap [] .quotes model.userData of
                     [] ->
                         Html.text ""
 

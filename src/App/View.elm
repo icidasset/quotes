@@ -7,6 +7,7 @@ import Html.Attributes as A
 import Html.Events as E
 import Material.Icons.Round as Icons
 import Material.Icons.Types exposing (Coloring(..))
+import Maybe.Extra as Maybe
 import Page exposing (AddContext, Page(..))
 import Quote exposing (..)
 import Radix exposing (..)
@@ -28,7 +29,11 @@ view model =
 
 body : Model -> List (Html Msg)
 body model =
-    if model.authenticated then
+    if model.isLoading then
+        -- TODO: Use actual loading animation (see HTML file)
+        [ Html.text "Loading ..." ]
+
+    else if Maybe.isJust model.userData then
         -----------------------------------------
         -- Authenticated
         -----------------------------------------
@@ -242,8 +247,13 @@ textfieldAttributes placeholder =
 
 index : Model -> Html Msg
 index model =
-    case model.selectedQuote of
-        ( Just quote, _ ) ->
+    case
+        Maybe.map2
+            (\quote userData -> ( quote, userData ))
+            (Tuple.first model.selectedQuote)
+            model.userData
+    of
+        Just ( quote, userData ) ->
             Html.div
                 []
                 [ quoteView quote model
@@ -273,13 +283,13 @@ index model =
                     --
                     , T.dark__text_base03
                     ]
-                    [ Html.text (String.fromInt <| List.length model.selectionHistory)
+                    [ Html.text (String.fromInt <| List.length userData.selectionHistory)
                     , Html.text " of "
-                    , Html.text (String.fromInt <| List.length model.quotes)
+                    , Html.text (String.fromInt <| List.length userData.quotes)
                     ]
                 ]
 
-        ( Nothing, _ ) ->
+        Nothing ->
             Html.a
                 [ A.href (Page.path { from = model.page, to = Page.add })
                 , T.block

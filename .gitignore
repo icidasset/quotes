@@ -2,6 +2,7 @@
 /elm-stuff
 /node_modules
 /src/Tailwind.elm
+/web_modules
 
 .DS_Store
 .fission.yaml
