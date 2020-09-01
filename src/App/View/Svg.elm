@@ -40,6 +40,27 @@ badgeOutline =
         ]
 
 
+loading : Svg msg
+loading =
+    svg
+        [ class "loading-animation"
+        , height "29"
+        , width "29"
+        , viewBox "0 0 30 30"
+        ]
+        [ Svg.circle
+            [ class "loading-animation__circle"
+            , cx "15"
+            , cy "15"
+            , fill "none"
+            , r "14"
+            , strokeLinecap "round"
+            , strokeWidth "2"
+            ]
+            []
+        ]
+
+
 icon : { gradient : Maybe { id : String, svg : Svg msg } } -> Svg msg
 icon { gradient } =
     svg

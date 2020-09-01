@@ -30,8 +30,16 @@ view model =
 body : Model -> List (Html Msg)
 body model =
     if model.isLoading then
-        -- TODO: Use actual loading animation (see HTML file)
-        [ Html.text "Loading ..." ]
+        [ Html.div
+            [ T.absolute
+            , T.left_1over2
+            , T.neg_translate_x_1over2
+            , T.neg_translate_y_1over2
+            , T.top_1over2
+            , T.transform
+            ]
+            [ Svg.loading ]
+        ]
 
     else if Maybe.isJust model.userData then
         -----------------------------------------
