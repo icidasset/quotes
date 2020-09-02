@@ -198,10 +198,13 @@ async function temporaryAlphaCodeHandler(err) {
     err.message.indexOf("Could not find index for node") > -1 ||
     err.message.indexOf("Could not parse a valid private tree using the given key") > -1
   ) {
-    fs = await wn.fs.empty({ keyName: "filesystem-lobby", prerequisites: pre })
-    await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publicise
-    alert("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible, so we'll have to create a new file system for you.")
-    return fs
+    const result = confirm("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible. Do you want to create a new file system?")
+
+    if (result) {
+      fs = await wn.fs.empty({ keyName: "filesystem-lobby", prerequisites: pre })
+      await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publicise
+      return fs
+    }
 
   } else {
     throw new Error(err)
