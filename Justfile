@@ -95,7 +95,6 @@ workbox_config 	:= "workbox.config.cjs"
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
 	pnpx workbox generateSW {{workbox_config}}
-	# TODO: pnpx workbox copyLibraries {{dist}}/
 
 
 @js-production:
@@ -113,7 +112,6 @@ workbox_config 	:= "workbox.config.cjs"
 		-- --compress --mangle
 
 	NODE_ENV=production pnpx workbox generateSW {{workbox_config}}
-	# TODO: NODE_ENV=production pnpx workbox copyLibraries {{dist}}/
 
 
 @static:

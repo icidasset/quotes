@@ -5,7 +5,8 @@ module.exports = {
   "globPatterns": [ "**/*.*" ],
   "runtimeCaching": [
     { urlPattern: /^https:\/\/cdnjs\./, handler: "StaleWhileRevalidate" },
-    { urlPattern: /^.*$/, handler: "NetworkFirst" }
+    { urlPattern: /^http/, handler: "NetworkFirst" },
+    { urlPattern: /(.*)/, handler: "NetworkFirst" }
   ],
   "skipWaiting": true,
   "swDest": "build/service-worker.js",
