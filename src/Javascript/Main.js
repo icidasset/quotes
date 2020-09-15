@@ -8,6 +8,14 @@ const wn = webnative
 // 🍱
 
 
+const PERMISSIONS = {
+  app: {
+    name: "Quotes",
+    creator: "icidasset"
+  }
+}
+
+
 wn.setup.debug({ enabled: true })
 
 
@@ -15,23 +23,13 @@ wn.setup.debug({ enabled: true })
 // 🚀
 
 
-let elm, fs, pre
+let elm, fs
 
 
-wn.initialise({
-    app: {
-      name: "Quotes",
-      creator: "icidasset"
-    }
-  })
-
+wn.initialise({ permissions: PERMISSIONS })
   .catch(temporaryAlphaCodeHandler)
-
-  .then(async ({ prerequisites, scenario, state }) => {
+  .then(async state => {
     const { authenticated, newUser, throughLobby, username } = state
-
-    // Expose prerequisites
-    pre = prerequisites
 
     // The file system,
     // we'll use this later (see CRUD functions below)
@@ -53,7 +51,7 @@ wn.initialise({
     elm.ports.addQuote.subscribe(addQuote)
     elm.ports.removeQuote.subscribe(removeQuote)
     elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
-    elm.ports.signIn.subscribe(() => wn.redirectToLobby(prerequisites))
+    elm.ports.signIn.subscribe(() => wn.redirectToLobby(PERMISSIONS))
     elm.ports.triggerRepaint.subscribe(triggerRepaint)
 
     // Continue Elm initialisation
@@ -206,8 +204,8 @@ async function temporaryAlphaCodeHandler(err) {
     const result = confirm("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible. Do you want to create a new file system?")
 
     if (result) {
-      fs = await wn.fs.empty({ keyName: "filesystem-lobby", prerequisites: pre })
-      await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publicise
+      fs = await wn.fs.empty({ keyName: "filesystem-lobby", permissions: per })
+      await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publish
       return fs
     }
 
@@ -248,7 +246,7 @@ const transactionQueue = []
 function nextTransaction() {
   const nextAction = transactionQueue.shift()
   if (nextAction) setTimeout(nextAction, 16)
-  else fs.publicise()
+  else fs.publish()
 }
 
 
