@@ -237,16 +237,31 @@ function triggerRepaint() {
 // ⚠️ Will be removed soon
 
 
-const transactionQueue = []
+const transactions = {
+  queue: [],
+  finished: true
+}
 
 
 /**
  * Process the next item in the transaction queue.
  */
-function nextTransaction() {
-  const nextAction = transactionQueue.shift()
-  if (nextAction) setTimeout(nextAction, 16)
-  else fs.publish()
+async function nextTransaction() {
+  transactions.finished = false
+  if (nextTransactionWithoutPublish()) return
+  await fs.publish()
+  if (nextTransactionWithoutPublish()) return
+  transactions.finished = true
+}
+
+function nextTransactionWithoutPublish() {
+  const nextAction = transactions.queue.shift()
+  if (nextAction) {
+    setTimeout(nextAction, 16)
+    return true
+  } else {
+    return false
+  }
 }
 
 
@@ -258,12 +273,12 @@ function nextTransaction() {
  * @param methodArguments The arguments for the given filesystem method
  */
 async function transaction(method, ...methodArguments) {
-  transactionQueue.push(async () => {
+  transactions.queue.push(async () => {
     await method.apply(fs, methodArguments)
-    nextTransaction()
+    await nextTransaction()
   })
 
-  if (transactionQueue.length === 1) {
+  if (transactions.finished) {
     nextTransaction()
   }
 }
