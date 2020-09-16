@@ -38,7 +38,7 @@ wn.initialise({ permissions: PERMISSIONS })
     // Initialise Elm app
     elm = Elm.Main.init({
       flags: {
-        authenticated,
+        authenticated: authenticated || false,
 
         currentTime:        Date.now(),
         newUser:            newUser || null,
@@ -204,7 +204,7 @@ async function temporaryAlphaCodeHandler(err) {
     const result = confirm("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible. Do you want to create a new file system?")
 
     if (result) {
-      fs = await wn.fs.empty({ keyName: "filesystem-lobby", permissions: per })
+      fs = await wn.fs.empty({ keyName: "filesystem-lobby", permissions: PERMISSIONS })
       await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publish
       return fs
     }
