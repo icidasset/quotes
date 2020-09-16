@@ -91,7 +91,7 @@ workbox_config 	:= "workbox.config.cjs"
 
 @js-dev:
 	echo "🍿  Copying & Compiling Javascript in development mode"
-	cp -rf web_modules {{dist}}/web_modules
+	cp -rf web_modules {{dist}}/
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
 	pnpx workbox generateSW {{workbox_config}}

@@ -19,6 +19,13 @@ const PERMISSIONS = {
 wn.setup.debug({ enabled: true })
 
 
+wn.setup.ipfs({
+  preload: {
+    enabled: false
+  }
+})
+
+
 
 // 🚀
 
@@ -206,7 +213,7 @@ async function temporaryAlphaCodeHandler(err) {
     if (result) {
       fs = await wn.fs.empty({ keyName: "filesystem-lobby", permissions: PERMISSIONS })
       await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publish
-      return fs
+      return wn.initialise({ permissions: PERMISSIONS })
     }
 
   } else {
