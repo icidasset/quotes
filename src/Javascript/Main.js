@@ -74,17 +74,11 @@ wn.initialise({ permissions: PERMISSIONS })
 // CRUD
 
 
+let collection
+
+
 function collectionPath() {
   return fs.appPath([ "Collection", "quotes.json" ])
-}
-
-
-async function collection() {
-  if (await fs.exists(collectionPath())) {
-    return fs.read(collectionPath()).then(JSON.parse)
-  } else {
-    return []
-  }
 }
 
 
@@ -93,12 +87,10 @@ async function collection() {
  */
 async function addQuote(quote) {
   console.log("✍ Adding quote", quote)
-  const existingQuotes = await collection()
-
   return await transaction(
     fs.write,
     collectionPath(),
-    toJsonBlob([ ...existingQuotes, quote ])
+    toJsonBlob([ ...collection, quote ])
   )
 }
 
@@ -108,8 +100,7 @@ async function addQuote(quote) {
  */
 async function removeQuote(quote) {
   console.log("✍ Removing quote", quote)
-  const existingQuotes = await collection()
-  const collectionWithoutQuote = existingQuotes.filter(q => q.id !== quote.id)
+  const collectionWithoutQuote = collection.filter(q => q.id !== quote.id)
 
   return await transaction(
     fs.write,
@@ -123,9 +114,16 @@ async function removeQuote(quote) {
  * Get the JSON-encoded `Quote`s from the file system,
  * and then decode them.
  */
-function loadQuotes() {
+async function loadQuotes() {
   console.log("✨ Loading quotes")
-  return collection()
+
+  if (await fs.exists(collectionPath())) {
+    collection = await fs.read(collectionPath()).then(JSON.parse)
+  } else {
+    collection = []
+  }
+
+  return collection
 }
 
 
