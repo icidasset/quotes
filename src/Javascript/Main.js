@@ -19,11 +19,11 @@ const PERMISSIONS = {
 wn.setup.debug({ enabled: true })
 
 
-wn.setup.ipfs({
-  preload: {
-    enabled: false
-  }
-})
+// wn.setup.endpoints({
+//   api: "https://runfission.net",
+//   lobby: "https://auth.runfission.net",
+//   user: "fissionuser.net"
+// })
 
 
 
@@ -45,7 +45,7 @@ wn.initialise({ permissions: PERMISSIONS })
     // Initialise Elm app
     elm = Elm.Main.init({
       flags: {
-        authenticated: authenticated || false,
+        authenticated:      authenticated || false,
 
         currentTime:        Date.now(),
         newUser:            newUser || null,
@@ -74,15 +74,31 @@ wn.initialise({ permissions: PERMISSIONS })
 // CRUD
 
 
+function collectionPath() {
+  return fs.appPath([ "Collection", "quotes.json" ])
+}
+
+
+async function collection() {
+  if (await fs.exists(collectionPath())) {
+    return fs.read(collectionPath()).then(JSON.parse)
+  } else {
+    return []
+  }
+}
+
+
 /**
  * Add a `Quote` to the file system.
  */
 async function addQuote(quote) {
   console.log("✍ Adding quote", quote)
+  const existingQuotes = await collection()
+
   return await transaction(
     fs.write,
-    fs.appPath([ "Collection", `${quote.id}.json` ]),
-    toJsonBlob(quote)
+    collectionPath(),
+    toJsonBlob([ ...existingQuotes, quote ])
   )
 }
 
@@ -92,9 +108,13 @@ async function addQuote(quote) {
  */
 async function removeQuote(quote) {
   console.log("✍ Removing quote", quote)
+  const existingQuotes = await collection()
+  const collectionWithoutQuote = existingQuotes.filter(q => q.id !== quote.id)
+
   return await transaction(
-    fs.rm,
-    fs.appPath([ "Collection", `${quote.id}.json` ])
+    fs.write,
+    collectionPath(),
+    toJsonBlob(collectionWithoutQuote)
   )
 }
 
@@ -104,24 +124,8 @@ async function removeQuote(quote) {
  * and then decode them.
  */
 function loadQuotes() {
-  const quotesPath =
-    fs.appPath([ "Collection" ])
-
-  return fs
-    // List collection.
-    // If the path doesn't exist, return an empty object.
-    .ls(quotesPath)
-    .catch(_ => {})
-    .then(a => a || {})
-
-    // Transform the object into a list,
-    // and retrieve each quote.
-    .then(Object.keys)
-    .then(links => Promise.all(
-      links
-        .filter(name => name.endsWith(".json"))
-        .map(name => fs.cat(`${quotesPath}/${name}`).then(JSON.parse))
-    ))
+  console.log("Load quotes")
+  return collection()
 }
 
 
@@ -166,14 +170,16 @@ async function importList(rawList) {
   // Save to file system
   console.log("🧳 Starting import", list)
 
-  await list.reduce(async (acc, quote, idx) => {
-    await acc
-    console.log(`🧳 Importing quote #${idx + 1}`)
-    return fs.write(
-      fs.appPath([ "Collection", `${quote.id}.json` ]),
-      toJsonBlob(quote)
-    )
-  }, Promise.resolve(null))
+  const existingQuotes = await collection()
+  const newCollection = [ ...existingQuotes, ...list ]
+
+  return await transaction(
+    fs.write,
+    collectionPath(),
+    toJsonBlob(newCollection)
+  )
+
+  console.log("🧳 Finished import")
 
   // Notify Elm app of imported quotes
   elm.ports.importedQuotes.send(list)
