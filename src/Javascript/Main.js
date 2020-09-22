@@ -124,7 +124,7 @@ async function removeQuote(quote) {
  * and then decode them.
  */
 function loadQuotes() {
-  console.log("Load quotes")
+  console.log("✨ Loading quotes")
   return collection()
 }
 
@@ -173,8 +173,7 @@ async function importList(rawList) {
   const existingQuotes = await collection()
   const newCollection = [ ...existingQuotes, ...list ]
 
-  return await transaction(
-    fs.write,
+  await fs.write(
     collectionPath(),
     toJsonBlob(newCollection)
   )
