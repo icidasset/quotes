@@ -168,7 +168,7 @@ async function importList(rawList) {
   // Save to file system
   console.log("🧳 Starting import", list)
 
-  const existingQuotes = await collection()
+  const existingQuotes = collection
   const newCollection = [ ...existingQuotes, ...list ]
 
   await fs.write(
