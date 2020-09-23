@@ -99,8 +99,7 @@ workbox_config 	:= "workbox.config.cjs"
 
 @js-production:
 	echo "🍿  Copying & Compiling Javascript in production mode"
-	mkdir -p {{dist}}/web_modules
-	cp ./node_modules/webnative/index.umd.js {{dist}}/web_modules/webnative.js
+	cp -rf web_modules {{dist}}/
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
 	pnpx terser-dir \
