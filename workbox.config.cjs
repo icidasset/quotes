@@ -3,6 +3,7 @@ module.exports = {
   "clientsClaim": true,
   "globDirectory": "build/",
   "globPatterns": [ "**/*.*" ],
+  "inlineWorkboxRuntime": true,
   "runtimeCaching": [
     { urlPattern: /^https:\/\/cdnjs\./, handler: "StaleWhileRevalidate" },
     { urlPattern: /^http/, handler: "NetworkFirst" },
