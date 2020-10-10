@@ -28,6 +28,7 @@ view model =
         , T.mb_6
         , T.neg_translate_x_1over2
         , T.select_none
+        , T.space_x_6
         , T.text_base04
         , T.transform
 
@@ -150,11 +151,7 @@ iconButton btnType attributes =
         (List.append
             [ T.appearance_none
             , T.cursor_pointer
-            , T.ml_6
             , T.rounded
-
-            --
-            , T.first__ml_0
             ]
             attributes
         )

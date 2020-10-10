@@ -1,7 +1,7 @@
 /build
 /elm-stuff
 /node_modules
-/src/Tailwind.elm
+/src/Etcetera
 /web_modules
 
 .DS_Store

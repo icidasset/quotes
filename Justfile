@@ -50,7 +50,7 @@ workbox_config 	:= "workbox.config.cjs"
 	# and generate the Elm module
 	pnpx etc {{src}}/Css/Main.css \
 		--config tailwind.config.js \
-	  --elm-path {{src}}/Tailwind.elm \
+	  --elm-path {{src}}/Etcetera/Tailwind.elm \
 	  --output {{dist_css}} \
 		\
 		--post-plugin-before postcss-import \
