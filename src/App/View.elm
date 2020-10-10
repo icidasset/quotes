@@ -271,7 +271,7 @@ index model =
                 -----------------------------------------
                 , Html.div
                     [ A.title "Quotes seen from collection"
-                    , E.onClick SelectNextQuote
+                    , E.onClick ClearHistory
 
                     --
                     , T.bottom_0

@@ -68,6 +68,9 @@ update msg =
         -----------------------------------------
         -- Other
         -----------------------------------------
+        ClearHistory ->
+            clearHistory
+
         GotCurrentTime a ->
             gotCurrentTime a
 
@@ -209,6 +212,18 @@ removeQuote quote model =
 
 
 -- 🛠  ▒▒  OTHER
+
+
+clearHistory : Manager
+clearHistory model =
+    case model.userData of
+        Just userData ->
+            { userData | selectionHistory = [] }
+                |> (\u -> { model | userData = Just u })
+                |> selectNextQuote
+
+        Nothing ->
+            Return.singleton model
 
 
 gotCurrentTime : Time.Posix -> Manager

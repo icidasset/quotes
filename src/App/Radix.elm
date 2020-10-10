@@ -55,6 +55,7 @@ type
       -----------------------------------------
       -- Other
       -----------------------------------------
+    | ClearHistory
     | GotCurrentTime Time.Posix
     | ImportedQuotes (List Quote)
     | LinkClicked UrlRequest
