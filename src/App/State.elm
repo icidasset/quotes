@@ -3,6 +3,7 @@ module State exposing (..)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Navigation
 import Confirm
+import ContextMenu
 import List.Extra as List
 import Page
 import Ports
@@ -29,6 +30,7 @@ init flags url navKey =
       -- Model
       -----------------------------------------
       { confirmation = Nothing
+      , contextMenu = ContextMenu.init
       , currentTime = Time.millisToPosix flags.currentTime
       , isLoading = flags.authenticated
       , navKey = navKey

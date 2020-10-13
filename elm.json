@@ -17,7 +17,8 @@
             "elm/url": "1.0.0",
             "elm-community/list-extra": "8.2.4",
             "elm-community/maybe-extra": "5.2.0",
-            "icidasset/elm-material-icons": "4.0.0"
+            "icidasset/elm-material-icons": "4.0.0",
+            "jinjor/elm-contextmenu": "2.0.0"
         },
         "indirect": {
             "avh4/elm-color": "1.0.0",

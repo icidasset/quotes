@@ -3,6 +3,8 @@ module Radix exposing (..)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Navigation
 import Confirm exposing (Confirmation)
+import ContextMenu exposing (ContextMenu)
+import ContextMenu.Context as ContextMenu
 import Page exposing (Page)
 import Quote exposing (..)
 import Random
@@ -30,6 +32,7 @@ type alias Flags =
 
 type alias Model =
     { confirmation : Maybe Confirmation
+    , contextMenu : ContextMenu ContextMenu.Context
     , currentTime : Time.Posix
     , isLoading : Bool
     , navKey : Navigation.Key
