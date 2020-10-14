@@ -17,7 +17,7 @@ workbox_config 	:= "workbox.config.cjs"
 	just dev-server & just watch
 
 
-@dev-build: clean css-large elm-dev html js-dev static
+@dev-build: clean css-large elm-dev html js-dev static service-worker
 
 
 @dev-server:
@@ -32,7 +32,7 @@ workbox_config 	:= "workbox.config.cjs"
 	cp node_modules/webnative/index.umd.js ./web_modules/webnative.js
 
 
-@production-build: clean css-large elm-production html css-small js-production static
+@production-build: clean css-large elm-production html css-small js-production static service-worker-production
 
 
 
@@ -94,8 +94,6 @@ workbox_config 	:= "workbox.config.cjs"
 	cp -rf web_modules {{dist}}/
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
-	pnpx workbox generateSW {{workbox_config}}
-
 
 @js-production:
 	echo "🍿  Copying & Compiling Javascript in production mode"
@@ -110,6 +108,14 @@ workbox_config 	:= "workbox.config.cjs"
 		--output {{dist}} \
 		-- --compress --mangle
 
+
+@service-worker:
+	echo "🍿  Generating service worker"
+	NODE_ENV=development pnpx workbox generateSW {{workbox_config}}
+
+
+@service-worker-production:
+	echo "🍿  Generating service worker"
 	NODE_ENV=production pnpx workbox generateSW {{workbox_config}}
 
 
