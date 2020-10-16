@@ -87,11 +87,11 @@ function collectionPath() {
  */
 async function addQuote(quote) {
   console.log("✍ Adding quote", quote)
-  return await transaction(
-    fs.write,
+  collection = [ ...collection, quote ]
+  return await fs.write(
     collectionPath(),
-    toJsonBlob([ ...collection, quote ])
-  )
+    toJsonBlob(collection)
+    )
 }
 
 
@@ -101,11 +101,11 @@ async function addQuote(quote) {
 async function removeQuote(quote) {
   console.log("✍ Removing quote", quote)
   const collectionWithoutQuote = collection.filter(q => q.id !== quote.id)
+  collection = collectionWithoutQuote
 
-  return await transaction(
-    fs.write,
+  return await fs.write(
     collectionPath(),
-    toJsonBlob(collectionWithoutQuote)
+    toJsonBlob(collection)
   )
 }
 
@@ -144,11 +144,11 @@ async function retrieveSelectionHistory() {
 
 async function saveSelectionHistory(listOfQuoteIds) {
   console.log("👨‍🏫 Saving history", listOfQuoteIds)
-  await transaction(
-    fs.write,
+  await fs.write(
     historyPath(),
     toJsonBlob(listOfQuoteIds)
   )
+  await fs.publish()
 }
 
 
@@ -239,56 +239,4 @@ function triggerRepaint() {
   setTimeout(() => document.body.style.transform = "", 176)
   setTimeout(() => document.body.style.transform = "scale(1)", 320)
   setTimeout(() => document.body.style.transform = "", 336)
-}
-
-
-
-// TRANSACTIONS
-// ⚠️ Will be removed soon
-
-
-const transactions = {
-  queue: [],
-  finished: true
-}
-
-
-/**
- * Process the next item in the transaction queue.
- */
-async function nextTransaction() {
-  transactions.finished = false
-  if (nextTransactionWithoutPublish()) return
-  await fs.publish()
-  if (nextTransactionWithoutPublish()) return
-  transactions.finished = true
-}
-
-function nextTransactionWithoutPublish() {
-  const nextAction = transactions.queue.shift()
-  if (nextAction) {
-    setTimeout(nextAction, 16)
-    return true
-  } else {
-    return false
-  }
-}
-
-
-/**
- * The Fission filesystem doesn't support parallel writes yet.
- * This function is a way around that.
- *
- * @param method The filesystem method to run
- * @param methodArguments The arguments for the given filesystem method
- */
-async function transaction(method, ...methodArguments) {
-  transactions.queue.push(async () => {
-    await method.apply(fs, methodArguments)
-    await nextTransaction()
-  })
-
-  if (transactions.finished) {
-    nextTransaction()
-  }
 }
