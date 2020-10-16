@@ -90,8 +90,9 @@ async function addQuote(quote) {
   collection = [ ...collection, quote ]
   return await fs.write(
     collectionPath(),
-    toJsonBlob(collection)
-    )
+    toJsonBlob(collection),
+    { publish: true }
+  )
 }
 
 
@@ -105,7 +106,8 @@ async function removeQuote(quote) {
 
   return await fs.write(
     collectionPath(),
-    toJsonBlob(collection)
+    toJsonBlob(collection),
+    { publish: true }
   )
 }
 
@@ -144,11 +146,11 @@ async function retrieveSelectionHistory() {
 
 async function saveSelectionHistory(listOfQuoteIds) {
   console.log("👨‍🏫 Saving history", listOfQuoteIds)
-  await fs.write(
+  return await fs.write(
     historyPath(),
-    toJsonBlob(listOfQuoteIds)
+    toJsonBlob(listOfQuoteIds),
+    { publish: true }
   )
-  await fs.publish()
 }
 
 
