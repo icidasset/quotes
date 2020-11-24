@@ -211,7 +211,8 @@ async function temporaryAlphaCodeHandler(err) {
   if (
     err.message.indexOf("Could not find header value: metadata") > -1 ||
     err.message.indexOf("Could not find index for node") > -1 ||
-    err.message.indexOf("Could not parse a valid private tree using the given key") > -1
+    err.message.indexOf("Could not parse a valid private tree using the given key") > -1 ||
+    err.message.indexOf("Improperly formatted header value: metadata") > -1
   ) {
     const result = confirm("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible. Do you want to create a new file system?")
 
