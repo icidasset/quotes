@@ -41,7 +41,6 @@ elm = Elm.Main.init({
 
 
 wn.initialise({ permissions: PERMISSIONS })
-  .catch(temporaryAlphaCodeHandler)
   .then(async state => {
     const { authenticated, newUser, throughLobby, username } = state
 
@@ -198,34 +197,6 @@ function toJsonBlob(value) {
 
 
 // 💩
-
-
-/**
- * TODO:
- * Remove this temporary code when the alpha-tester folks
- * have upgraded their code. Later we'll have filesystem versioning.
- */
-async function temporaryAlphaCodeHandler(err) {
-  console.error(err)
-
-  if (
-    err.message.indexOf("Could not find header value: metadata") > -1 ||
-    err.message.indexOf("Could not find index for node") > -1 ||
-    err.message.indexOf("Could not parse a valid private tree using the given key") > -1
-  ) {
-    const result = confirm("Thanks for testing the alpha version of the webnative sdk. We refactored the file system which is not backwards compatible. Do you want to create a new file system?")
-
-    if (result) {
-      fs = await wn.fs.empty({ keyName: "filesystem-lobby", permissions: PERMISSIONS })
-      await saveSelectionHistory([]) // do a crud operation to trigger a mutation + publish
-      return wn.initialise({ permissions: PERMISSIONS })
-    }
-
-  } else {
-    throw new Error(err)
-
-  }
-}
 
 
 /**
