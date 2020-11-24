@@ -33,26 +33,26 @@ wn.setup.debug({ enabled: true })
 let elm, fs
 
 
+elm = Elm.Main.init({
+  flags: {
+    currentTime: Date.now()
+  }
+})
+
+
 wn.initialise({ permissions: PERMISSIONS })
   .catch(temporaryAlphaCodeHandler)
   .then(async state => {
     const { authenticated, newUser, throughLobby, username } = state
 
+    // Continue initialisation process in Elm app
+    elm.ports.initialise.send({
+      authenticated: authenticated || false,
+    })
+
     // The file system,
     // we'll use this later (see CRUD functions below)
     fs = state.fs
-
-    // Initialise Elm app
-    elm = Elm.Main.init({
-      flags: {
-        authenticated:      authenticated || false,
-
-        currentTime:        Date.now(),
-        newUser:            newUser || null,
-        throughLobby:       throughLobby || false,
-        username:           username || null
-      }
-    })
 
     // Communicate with Elm app
     elm.ports.addQuote.subscribe(addQuote)
@@ -291,45 +291,4 @@ async function transaction(method, ...methodArguments) {
   if (transactions.finished) {
     nextTransaction()
   }
-}
-
-
-
-// SHARED WORKER
-// ⚠️ To do
-//
-// Game plan:
-// - Run `setupIpfsClient` before `initialise`
-// - Run `setupIpfsIframe` before loading the file system
-// - Disable automatic file-system loading by passing option to `initialise`
-// - Load the file system ourselves
-//
-// This will be moved into the SDK later.
-
-
-function setupIpfsClient() {
-  ipfs = IpfsMessagePortClient.detached()
-  wn.ipfs.set(ipfs)
-}
-
-
-function setupIpfsIframe() {
-  return new Promise((resolve) => {
-    const iframe = document.createElement("iframe")
-    iframe.style.width = "0"
-    iframe.style.height = "0"
-    iframe.style.border = "none"
-    document.body.appendChild(iframe)
-
-    iframe.onload = () => {
-      const channel = new MessageChannel()
-      channel.port1.onmessage = ({ ports }) => {
-        IpfsMessagePortClient.attach(ipfs, ports[0])
-      }
-      iframe.contentWindow.postMessage("CONNECT", "*", [ channel.port2 ])
-      resolve()
-    }
-
-    iframe.src = "http://localhost:8001/ipfs.html"
-  })
 }

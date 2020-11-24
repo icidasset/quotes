@@ -30,7 +30,7 @@ init flags url navKey =
       -----------------------------------------
       { confirmation = Nothing
       , currentTime = Time.millisToPosix flags.currentTime
-      , isLoading = flags.authenticated
+      , isLoading = True
       , navKey = navKey
       , page = Page.fromUrl url
       , selectedQuote = ( Nothing, initialSeed )
@@ -50,6 +50,9 @@ init flags url navKey =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg =
     case msg of
+        Initialise a ->
+            initialise a
+
         -----------------------------------------
         -- CRUD
         -----------------------------------------
@@ -104,9 +107,19 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Ports.importedQuotes ImportedQuotes
+        , Ports.initialise Initialise
         , Ports.loadUserData LoadUserData
         , Time.every (60 * 1000) GotCurrentTime
         ]
+
+
+
+-- 🛠
+
+
+initialise : Initialisation -> Manager
+initialise { authenticated } model =
+    Return.singleton { model | isLoading = authenticated }
 
 
 

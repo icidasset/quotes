@@ -28,7 +28,6 @@ workbox_config 	:= "workbox.config.cjs"
 @install-deps:
 	pnpm install
 	mkdir -p web_modules
-	curl -o web_modules/ipfs-message-port-client.min.js https://unpkg.com/ipfs-message-port-client@0.1.2-rc.0/dist/index.min.js
 	cp node_modules/webnative/index.umd.js ./web_modules/webnative.js
 
 

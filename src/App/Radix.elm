@@ -16,11 +16,12 @@ import UserData exposing (UserData)
 
 
 type alias Flags =
+    { currentTime : Int
+    }
+
+
+type alias Initialisation =
     { authenticated : Bool
-    , currentTime : Int
-    , newUser : Maybe Bool
-    , throughLobby : Bool
-    , username : Maybe String
     }
 
 
@@ -43,12 +44,12 @@ type alias Model =
 -- 📣
 
 
-type
-    Msg
-    -----------------------------------------
-    -- CRUD
-    -----------------------------------------
-    = AddQuote Page.AddContext
+type Msg
+    = Initialise Initialisation
+      -----------------------------------------
+      -- CRUD
+      -----------------------------------------
+    | AddQuote Page.AddContext
     | GotAddInputForAuthor String
     | GotAddInputForQuote String
     | RemoveQuote Quote
