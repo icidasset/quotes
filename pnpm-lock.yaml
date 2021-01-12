@@ -1,5 +1,5 @@
 dependencies:
-  webnative: 0.21.1
+  webnative: 0.21.2-alpha-1
 devDependencies:
   elm-tailwind-css: 0.4.6_tailwindcss@1.6.2
   postcss-custom-properties: 9.1.1
@@ -4898,7 +4898,7 @@ packages:
     dev: false
     resolution:
       integrity: sha512-26wEnRPEFAc5d5lmH1Q/DuvWEYsRF1D2alX2jlKpdmqv7cj+BbANL7Xlcl9r4s72Eg9kItZa9RWVbBMC9dMv4w==
-  /webnative/0.21.1:
+  /webnative/0.21.2-alpha-1:
     dependencies:
       base58-universal: 1.0.0
       borc: 2.1.2
@@ -4915,7 +4915,7 @@ packages:
     engines:
       node: '>=10.21.0'
     resolution:
-      integrity: sha512-N4oawXhTa/2t+UnZmPtKTofaN2VRSZspdpcaPg6u5+u2IZNbtaRSlMO1uM6jlTk9fF/K7ELQv7S2q2MGc10nJg==
+      integrity: sha512-Nqykz4vHzmWQwkLhw4334CrylGTH5jZdGkqWw07RGeRFnC/OuFsfo/FephON96l6EDE7D/J2wn9m1ZS9fWkMvQ==
   /which/1.3.1:
     dependencies:
       isexe: 2.0.0
@@ -5146,6 +5146,6 @@ specifiers:
   postcss-import: ^12.0.1
   tailwindcss: ^1.6.2
   terser-dir: ^1.0.7
-  webnative: 0.21.1
+  webnative: 0.21.2-alpha-1
   workbox-cli: ^5.1.4
   workbox-strategies: ^5.1.4
