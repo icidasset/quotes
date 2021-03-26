@@ -1,5 +1,4 @@
 module.exports = {
-  cacheId: "icidasset/quotes",
   clientsClaim: true,
   globDirectory: "build/",
   globPatterns: [ "**/*" ],
