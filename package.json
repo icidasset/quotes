@@ -11,6 +11,6 @@
     "workbox-strategies": "^6.1.2"
   },
   "dependencies": {
-    "webnative": "^0.23.2"
+    "webnative": "0.24.0-alpha-10"
   }
 }
