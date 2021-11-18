@@ -21,7 +21,7 @@ wn.setup.debug({ enabled: true })
 
 // wn.setup.endpoints({
 //   api: "https://runfission.net",
-//   lobby: "https://auth.runfission.net",
+//   lobby: "http://localhost:8001",
 //   user: "fissionuser.net"
 // })
 
@@ -121,7 +121,10 @@ async function loadQuotes() {
   console.log("✨ Loading quotes")
 
   if (await fs.exists(collectionPath())) {
-    collection = await fs.read(collectionPath()).then(JSON.parse)
+    collection = await fs.read(collectionPath()).then(bytes => {
+      const json = new TextDecoder().decode(bytes)
+      return JSON.parse(json)
+    })
   } else {
     collection = []
   }
@@ -143,7 +146,7 @@ function historyPath() {
 
 async function retrieveSelectionHistory() {
   const json = await fs.read(historyPath()).catch(_ => null)
-  return json ? JSON.parse(json) : []
+  return json ? JSON.parse(new TextDecoder().decode(json)) : []
 }
 
 

@@ -28,7 +28,7 @@ workbox_config 	:= "workbox.config.cjs"
 @install-deps:
 	pnpm install
 	mkdir -p web_modules
-	cp node_modules/webnative/dist/index.umd.js ./web_modules/webnative.js
+	cp node_modules/webnative/dist/index.umd.min.js ./web_modules/webnative.min.js
 
 
 @production-build: clean css-large elm-production html css-small js-production static service-worker-production
