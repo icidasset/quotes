@@ -2,7 +2,7 @@
 // | (• ◡•)| (❍ᴥ❍ʋ)
 
 
-const wn = webnative
+import * as wn from "./web_modules/webnative/index.js"
 
 
 // 🍱

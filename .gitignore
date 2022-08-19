@@ -4,4 +4,5 @@
 /src/Etcetera
 /web_modules
 
+.direnv
 .DS_Store

@@ -14,7 +14,7 @@ workbox_config 	:= "workbox.config.cjs"
 # -----
 
 @default: dev-build
-	just dev-server & just watch
+	just dev-server # & just watch
 
 
 @dev-build: clean css-large elm-dev html js-dev static service-worker
@@ -22,13 +22,13 @@ workbox_config 	:= "workbox.config.cjs"
 
 @dev-server:
 	echo "🤵  Serving the app on http://localhost:8002"
-	devd --all --notfound=index.html --port 8002 --quiet ./build
+	simple-http-server --port 8002 --try-file build/index.html --cors --index --nocache --silent -- build
 
 
 @install-deps:
-	pnpm install
+	npm install
 	mkdir -p web_modules
-	cp node_modules/webnative/dist/index.umd.min.js ./web_modules/webnative.min.js
+	cp -r node_modules/webnative/dist/ ./web_modules/webnative/
 
 
 @production-build: clean css-large elm-production html css-small js-production static service-worker-production
@@ -47,22 +47,20 @@ workbox_config 	:= "workbox.config.cjs"
 
 	# Make a CSS build with all the Tailwind stuff
 	# and generate the Elm module
-	pnpx etc {{src}}/Css/Main.css \
+	npx elm-tailwind-css {{src}}/Css/Main.css \
 		--config tailwind.config.js \
 	  --elm-path {{src}}/Etcetera/Tailwind.elm \
 	  --output {{dist_css}} \
 		\
 		--post-plugin-before postcss-import \
-		--post-plugin-after postcss-custom-properties \
-		\
-		>/dev/null 2>&1
+		--post-plugin-after postcss-custom-properties
 
 
 @css-small:
 	echo "🖼  Generating a tiny CSS file based on the generated Elm app"
 
 	# Make a minified & purged CSS build
-	NODE_ENV=production pnpx etc {{src}}/Css/Main.css \
+	NODE_ENV=production npx elm-tailwind-css {{src}}/Css/Main.css \
 		--config tailwind.config.js \
 	  --output {{dist_css}} \
 		\
@@ -99,7 +97,7 @@ workbox_config 	:= "workbox.config.cjs"
 	cp -rf web_modules {{dist}}/
 	cp {{src}}/Javascript/Main.js {{dist}}/index.js
 
-	pnpx terser-dir \
+	npx terser-dir \
 		{{dist}} \
 		--each --extension .js \
 		--pattern "**/*.js, !**/*.min.js" \
@@ -110,12 +108,12 @@ workbox_config 	:= "workbox.config.cjs"
 
 @service-worker:
 	echo "🍿  Generating service worker"
-	NODE_ENV=development pnpx workbox generateSW {{workbox_config}}
+	NODE_ENV=development npx workbox generateSW {{workbox_config}}
 
 
 @service-worker-production:
 	echo "🍿  Generating service worker"
-	NODE_ENV=production pnpx workbox generateSW {{workbox_config}}
+	NODE_ENV=production npx workbox generateSW {{workbox_config}}
 
 
 @static:
