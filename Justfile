@@ -100,7 +100,7 @@ workbox_config 	:= "workbox.config.cjs"
 	npx terser-dir \
 		{{dist}} \
 		--each --extension .js \
-		--pattern "**/*.js, !**/*.min.js" \
+		--pattern "*/*.js, !**/*.min.js" \
 		--pseparator ", " \
 		--output {{dist}} \
 		-- --compress --mangle
