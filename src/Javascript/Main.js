@@ -21,7 +21,7 @@ wn.setup.debug({ enabled: true })
 
 // wn.setup.endpoints({
 //   api: "https://runfission.net",
-//   lobby: "http://localhost:8001",
+//   lobby: "https://auth.runfission.net",
 //   user: "fissionuser.net"
 // })
 
@@ -40,7 +40,10 @@ elm = Elm.Main.init({
 })
 
 
-wn.initialise({ permissions: PERMISSIONS })
+wn.ipfs.pkgFromBundle()
+  .then(wn.ipfs.nodeWithPkg)
+  .then(wn.ipfs.set)
+  .then(() => wn.initialise({ permissions: PERMISSIONS }))
   .then(async state => {
     const { authenticated, newUser, throughLobby, username } = state
 
@@ -62,8 +65,8 @@ wn.initialise({ permissions: PERMISSIONS })
 
     // Continue Elm initialisation
     if (authenticated) elm.ports.loadUserData.send({
-      quotes:             await loadQuotes(),
-      selectionHistory:   await retrieveSelectionHistory(),
+      quotes: await loadQuotes(),
+      selectionHistory: await retrieveSelectionHistory(),
     })
 
   })
