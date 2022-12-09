@@ -2,7 +2,7 @@
 // | (• ◡•)| (❍ᴥ❍ʋ)
 
 
-import * as wn from "./web_modules/webnative/index.js"
+import * as wn from "./web_modules/webnative/index.esm.min.js"
 
 
 // 🍱
@@ -14,16 +14,6 @@ const PERMISSIONS = {
     creator: "icidasset"
   }
 }
-
-
-wn.setup.debug({ enabled: true })
-
-
-// wn.setup.endpoints({
-//   api: "https://runfission.net",
-//   lobby: "https://auth.runfission.net",
-//   user: "fissionuser.net"
-// })
 
 
 
@@ -40,31 +30,43 @@ elm = Elm.Main.init({
 })
 
 
-wn.ipfs.pkgFromBundle()
-  .then(wn.ipfs.nodeWithPkg)
-  .then(wn.ipfs.set)
-  .then(() => wn.initialise({ permissions: PERMISSIONS }))
-  .then(async state => {
-    const { authenticated, newUser, throughLobby, username } = state
+const appInfo = { creator: "icidasset", name: "Quotes" }
+
+
+const config = {
+  namespace: appInfo,
+  permissions: { app: appInfo },
+  debug: true,
+}
+
+
+const components = await wn.compositions.fission(config)
+
+
+wn.assemble(config, components)
+  .then(async program => {
+    const { session } = program
+
+    console.log(program)
 
     // Continue initialisation process in Elm app
     elm.ports.initialise.send({
-      authenticated: authenticated || false,
+      authenticated: !!session,
     })
 
     // The file system,
     // we'll use this later (see CRUD functions below)
-    fs = state.fs
+    fs = session ? session.fs : null
 
     // Communicate with Elm app
     elm.ports.addQuote.subscribe(addQuote)
     elm.ports.removeQuote.subscribe(removeQuote)
     elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
-    elm.ports.signIn.subscribe(() => wn.redirectToLobby(PERMISSIONS))
+    elm.ports.signIn.subscribe(() => program.capabilities.request(PERMISSIONS))
     elm.ports.triggerRepaint.subscribe(triggerRepaint)
 
     // Continue Elm initialisation
-    if (authenticated) elm.ports.loadUserData.send({
+    if (session) elm.ports.loadUserData.send({
       quotes: await loadQuotes(),
       selectionHistory: await retrieveSelectionHistory(),
     })
@@ -80,7 +82,8 @@ let collection
 
 
 function collectionPath() {
-  return fs.appPath(
+  return wn.path.appData(
+    appInfo,
     wn.path.file("Collection", "quotes.json")
   )
 }
@@ -141,7 +144,8 @@ async function loadQuotes() {
 
 
 function historyPath() {
-  return fs.appPath(
+  return wn.path.appData(
+    appInfo,
     wn.path.file("History", "selection.json")
   )
 }

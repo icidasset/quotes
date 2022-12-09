@@ -27,6 +27,7 @@ workbox_config 	:= "workbox.config.cjs"
 
 @install-deps:
 	npm install
+	rm -rf ./web_modules/webnative/
 	mkdir -p web_modules
 	cp -r node_modules/webnative/dist/ ./web_modules/webnative/
 
