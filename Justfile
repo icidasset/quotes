@@ -14,7 +14,7 @@ workbox_config 	:= "workbox.config.cjs"
 # -----
 
 @default: dev-build
-	just dev-server # & just watch
+	just dev-server & just watch
 
 
 @dev-build: clean css-large elm-dev html js-dev static service-worker
@@ -27,9 +27,9 @@ workbox_config 	:= "workbox.config.cjs"
 
 @install-deps:
 	npm install
-	rm -rf ./web_modules/webnative/
-	mkdir -p web_modules
-	cp -r node_modules/webnative/dist/ ./web_modules/webnative/
+	rm -rf ./web_modules/odd-js/
+	mkdir -p web_modules/odd-js/
+	cp -r node_modules/@oddjs/odd/dist/ ./web_modules/odd-js/
 
 
 @production-build: clean css-large elm-production html css-small js-production static service-worker-production

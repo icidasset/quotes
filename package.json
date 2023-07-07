@@ -12,6 +12,6 @@
     "workbox-strategies": "^6.1.2"
   },
   "dependencies": {
-    "webnative": "file:../../Work/webnative"
+    "@oddjs/odd": "file:../../Work/ts-odd"
   }
 }

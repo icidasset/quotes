@@ -2,71 +2,73 @@
 // | (• ◡•)| (❍ᴥ❍ʋ)
 
 
-import * as wn from "./web_modules/webnative/index.esm.min.js"
-
-
-// 🍱
-
-
-const PERMISSIONS = {
-  app: {
-    name: "Quotes",
-    creator: "icidasset"
-  }
-}
-
+import * as odd from "@oddjs/odd"
 
 
 // 🚀
 
+const Elm = /** @type {*} */ (window).Elm
 
-let elm, fs
-
-
-elm = Elm.Main.init({
+/** @type {*} */
+const elm = Elm.Main.init({
   flags: {
     currentTime: Date.now()
   }
 })
 
+/** @type {odd.FileSystem | null} */
+let fs
 
+/** @type {odd.AppInfo} */
 const appInfo = { creator: "icidasset", name: "Quotes" }
 
-
+/** @type {odd.Configuration} */
 const config = {
   namespace: appInfo,
-  permissions: { app: appInfo },
   debug: true,
 }
 
-
-const components = await wn.compositions.fission(config)
-
-
-wn.assemble(config, components)
+odd
+  .program(config, "authority")
   .then(async program => {
-    const { session } = program
+    let { connected } = await program.isConnected()
 
-    console.log(program)
+    console.log("Connected:", connected)
+
+    if (!connected) {
+      const formValues = { username: "icidasset-test-next-001" }
+      const canRegister = await program.canRegister(formValues)
+
+      if (canRegister.ok) {
+        await program.register(formValues)
+      } else {
+        throw new Error(canRegister.reason)
+      }
+
+      connected = await program.isConnected().then(a => a.connected)
+    }
+
+    // @ts-ignore
+    window.program = program
 
     // Continue initialisation process in Elm app
     elm.ports.initialise.send({
-      authenticated: !!session,
+      authenticated: connected,
     })
 
     // The file system,
     // we'll use this later (see CRUD functions below)
-    fs = session ? session.fs : null
+    fs = connected ? await program.fileSystem.load() : null
 
     // Communicate with Elm app
     elm.ports.addQuote.subscribe(addQuote)
     elm.ports.removeQuote.subscribe(removeQuote)
     elm.ports.saveSelectionHistory.subscribe(saveSelectionHistory)
-    elm.ports.signIn.subscribe(() => program.capabilities.request(PERMISSIONS))
+    elm.ports.signIn.subscribe(() => { /* TODO */ })
     elm.ports.triggerRepaint.subscribe(triggerRepaint)
 
     // Continue Elm initialisation
-    if (session) elm.ports.loadUserData.send({
+    if (connected) elm.ports.loadUserData.send({
       quotes: await loadQuotes(),
       selectionHistory: await retrieveSelectionHistory(),
     })
@@ -78,43 +80,53 @@ wn.assemble(config, components)
 // CRUD
 
 
-let collection
+/**
+ * @typedef {Object} Quote
+ * @property {string} id
+ */
+
+/** @type {Quote[]} */
+let collection = []
 
 
 function collectionPath() {
-  return wn.path.appData(
+  return odd.path.appData(
     appInfo,
-    wn.path.file("Collection", "quotes.json")
+    odd.path.file("Collection", "quotes.json")
   )
 }
 
 
 /**
  * Add a `Quote` to the file system.
+ *
+ * @param {Quote} quote
  */
 async function addQuote(quote) {
   console.log("✍ Adding quote", quote)
   collection = [ ...collection, quote ]
-  return await fs.write(
+  return await fs?.write(
     collectionPath(),
-    toJsonBlob(collection),
-    { publish: true }
+    "utf8",
+    toJSON(collection),
   )
 }
 
 
 /**
  * Remove a `Quote` from the file system.
+ *
+ * @param {Quote} quote
  */
 async function removeQuote(quote) {
   console.log("✍ Removing quote", quote)
   const collectionWithoutQuote = collection.filter(q => q.id !== quote.id)
   collection = collectionWithoutQuote
 
-  return await fs.write(
+  return await fs?.write(
     collectionPath(),
-    toJsonBlob(collection),
-    { publish: true }
+    "utf8",
+    toJSON(collection)
   )
 }
 
@@ -126,9 +138,8 @@ async function removeQuote(quote) {
 async function loadQuotes() {
   console.log("✨ Loading quotes")
 
-  if (await fs.exists(collectionPath())) {
-    collection = await fs.read(collectionPath()).then(bytes => {
-      const json = new TextDecoder().decode(bytes)
+  if (fs && await fs.exists(collectionPath())) {
+    collection = await fs.read(collectionPath(), "utf8").then(json => {
       return JSON.parse(json)
     })
   } else {
@@ -144,25 +155,26 @@ async function loadQuotes() {
 
 
 function historyPath() {
-  return wn.path.appData(
+  return odd.path.appData(
     appInfo,
-    wn.path.file("History", "selection.json")
+    odd.path.file("History", "selection.json")
   )
 }
 
 
 async function retrieveSelectionHistory() {
-  const json = await fs.read(historyPath()).catch(_ => null)
-  return json ? JSON.parse(new TextDecoder().decode(json)) : []
+  const json = await fs?.read(historyPath(), "utf8").catch(_ => null)
+  return json ? JSON.parse(json) : []
 }
 
 
+/** @param {string[]} listOfQuoteIds */
 async function saveSelectionHistory(listOfQuoteIds) {
   console.log("👨‍🏫 Saving history", listOfQuoteIds)
-  return await fs.write(
+  return await fs?.write(
     historyPath(),
-    toJsonBlob(listOfQuoteIds),
-    { publish: true }
+    "utf8",
+    toJSON(listOfQuoteIds)
   )
 }
 
@@ -173,6 +185,8 @@ async function saveSelectionHistory(listOfQuoteIds) {
 
 /**
  * Import a list of quotes.
+ *
+ * @param {Record<string, any>[]} rawList
  */
 async function importList(rawList) {
   const timestamp = Date.now()
@@ -186,9 +200,10 @@ async function importList(rawList) {
   const existingQuotes = collection
   const newCollection = [ ...existingQuotes, ...list ]
 
-  await fs.write(
+  await fs?.write(
     collectionPath(),
-    toJsonBlob(newCollection)
+    "utf8",
+    toJSON(newCollection)
   )
 
   console.log("🧳 Finished import")
@@ -199,13 +214,13 @@ async function importList(rawList) {
 
 
 /**
- * Transform into a JSON Blob.
+ * Transform into a JSON Blob.s
+ *
+ * @param {any} value
+ * @returns {string}
  */
-function toJsonBlob(value) {
-  return new Blob(
-    [ JSON.stringify(value) ],
-    { type: "text/plain" }
-  )
+function toJSON(value) {
+  return JSON.stringify(value)
 }
 
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -16,17 +17,29 @@
   <meta name="theme-color" content="#3b3228" />
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Roboto:wght@400;500&display=swap" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Roboto:wght@400;500&display=swap" />
   <link rel="stylesheet" href="application.css" />
 
   <!-- Javascript -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@oddjs/odd": "./web_modules/odd-js/index.esm.min.js"
+      }
+    }
+  </script>
   <script defer src="application.js"></script>
   <script defer type="module" src="index.js"></script>
 </head>
+
 <body>
 
   <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-    <svg class="loading-animation" height="29" width="29" viewbox="0 0 30 30"><circle class="loading-animation__circle" cx="15" cy="15" fill="none" r="14" stroke-linecap="round" stroke-width="2"></circle></svg>
+    <svg class="loading-animation" height="29" width="29" viewbox="0 0 30 30">
+      <circle class="loading-animation__circle" cx="15" cy="15" fill="none" r="14" stroke-linecap="round"
+        stroke-width="2"></circle>
+    </svg>
   </div>
 
 
@@ -40,4 +53,5 @@
   </script>
 
 </body>
+
 </html>
