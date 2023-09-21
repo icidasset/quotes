@@ -3,6 +3,7 @@
 
 
 import * as odd from "@oddjs/odd"
+import * as fission from "@oddjs/odd/compositions/fission"
 
 
 // 🚀
@@ -28,37 +29,31 @@ const config = {
   debug: true,
 }
 
+const components = await fission.components(config, { environment: "development" })
+
 odd
-  .program(config, "authority")
+  .program(config, components)
   .then(async program => {
-    let { connected } = await program.isConnected()
+    let { has } = await program.authority.has([
+      odd.authority.account,
+      odd.authority.fileSystem.rootAccess
+    ])
 
-    console.log("Connected:", connected)
-
-    if (!connected) {
-      const formValues = { username: "icidasset-test-next-001" }
-      const canRegister = await program.canRegister(formValues)
-
-      if (canRegister.ok) {
-        await program.register(formValues)
-      } else {
-        throw new Error(canRegister.reason)
-      }
-
-      connected = await program.isConnected().then(a => a.connected)
-    }
+    console.log("Connected:", has)
 
     // @ts-ignore
     window.program = program
 
     // Continue initialisation process in Elm app
     elm.ports.initialise.send({
-      authenticated: connected,
+      authenticated: has,
     })
 
     // The file system,
     // we'll use this later (see CRUD functions below)
-    fs = connected ? await program.fileSystem.load() : null
+    fs = await program.fileSystem.load(
+      await program.account.volume()
+    )
 
     // Communicate with Elm app
     elm.ports.addQuote.subscribe(addQuote)
@@ -68,7 +63,7 @@ odd
     elm.ports.triggerRepaint.subscribe(triggerRepaint)
 
     // Continue Elm initialisation
-    if (connected) elm.ports.loadUserData.send({
+    elm.ports.loadUserData.send({
       quotes: await loadQuotes(),
       selectionHistory: await retrieveSelectionHistory(),
     })
@@ -104,7 +99,7 @@ function collectionPath() {
  */
 async function addQuote(quote) {
   console.log("✍ Adding quote", quote)
-  collection = [ ...collection, quote ]
+  collection = [...collection, quote]
   return await fs?.write(
     collectionPath(),
     "utf8",
@@ -198,7 +193,7 @@ async function importList(rawList) {
   console.log("🧳 Starting import", list)
 
   const existingQuotes = collection
-  const newCollection = [ ...existingQuotes, ...list ]
+  const newCollection = [...existingQuotes, ...list]
 
   await fs?.write(
     collectionPath(),
